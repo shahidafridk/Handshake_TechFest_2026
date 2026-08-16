@@ -100,8 +100,9 @@ window.addEventListener('DOMContentLoaded', () => {
 
       const result = await response.json();
 
-      if (response.ok && (result.success || result.token)) {
-        const token = result.token || result.data?.token;
+      const token = result.token || result.data?.token;
+
+      if (response.ok && token) {
         const user = result.user || result.data?.user;
 
         if (token) localStorage.setItem('token', token);
@@ -113,7 +114,6 @@ window.addEventListener('DOMContentLoaded', () => {
         resetButtonState();
       }
     } catch (err) {
-      console.error('Fetch Error:', err);
       showError('Unable to connect to the backend server. Please try again.');
       resetButtonState();
     }

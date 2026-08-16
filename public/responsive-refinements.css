@@ -1,0 +1,153 @@
+/* Final responsive safeguards: layout containment, touch comfort, and keyboard-safe panels. */
+
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+button,
+input,
+a {
+  touch-action: manipulation;
+}
+
+button,
+.footer-note a {
+  min-height: 2.75rem;
+}
+
+input {
+  font-size: max(1rem, 16px);
+}
+
+.app,
+.frame,
+.header,
+.interaction,
+.section,
+.modal,
+.row,
+.timeline-row,
+.row-info,
+.timeline-info,
+.code-input-wrap,
+.token-display {
+  min-width: 0;
+}
+
+.row-info,
+.timeline-info {
+  overflow: hidden;
+}
+
+.timeline-when {
+  max-width: 5.5rem;
+}
+
+.modal {
+  width: min(100%, 36rem);
+  scroll-padding: var(--tf-space-4) var(--tf-space-4) max(5rem, env(safe-area-inset-bottom));
+  scrollbar-gutter: stable;
+}
+
+.modal:focus-within {
+  padding-bottom: max(3.25rem, calc(2rem + env(safe-area-inset-bottom)));
+}
+
+.protocol-status,
+.empty-note,
+.error-banner {
+  overflow-wrap: anywhere;
+}
+
+.token-validity,
+.count-number,
+.timeline-when {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 480px) {
+  /* Preserve functional feedback while removing decorative, persistent paint work. */
+  .network-bg .n-pulse,
+  .network-bg .n-react,
+  .glyph .arc,
+  .glyph .dot,
+  .brand-glyph .mg-spoke.mg-b,
+  .beacon .orbit-group,
+  .beacon .pulse-ring,
+  .beacon .ring-track,
+  .beacon .node {
+    animation: none !important;
+    will-change: auto;
+  }
+
+  .page { padding-block: max(1.25rem, env(safe-area-inset-top)) max(1.5rem, env(safe-area-inset-bottom)); }
+
+  .app {
+    padding-top: max(1rem, env(safe-area-inset-top));
+    padding-bottom: max(2.5rem, calc(1.5rem + env(safe-area-inset-bottom)));
+  }
+
+  .header {
+    gap: var(--tf-space-2);
+    padding: var(--tf-space-3);
+  }
+
+  .header > .identity { min-width: 0; }
+  .identity h1 { font-size: clamp(1.25rem, 6.4vw, 1.6rem); }
+  .identity .handle { font-size: .8125rem; }
+
+  .interaction {
+    padding-top: var(--tf-space-5);
+    padding-bottom: var(--tf-space-6);
+  }
+
+  .subtitle { margin-bottom: var(--tf-space-4); }
+  .btn-primary { min-width: min(100%, 15rem); }
+
+  .count-block { padding-bottom: var(--tf-space-6); }
+  .section { margin-bottom: var(--tf-space-8); }
+  .section-head { margin-bottom: var(--tf-space-2); }
+
+  .row,
+  .timeline-row { gap: var(--tf-space-2); }
+
+  .row-actions { gap: .375rem; }
+  .icon-btn { min-width: 2.75rem; min-height: 2.75rem; }
+  .timeline-when { max-width: 4.75rem; }
+
+  .modal {
+    max-height: calc(100dvh - .5rem);
+    padding-inline: var(--tf-space-4);
+  }
+
+  .modal-close { top: .75rem; right: .75rem; }
+  .protocol-status { min-height: 2.75rem; padding-inline: var(--tf-space-2); font-size: .6875rem; }
+  .tab-btn { min-height: 2.75rem; font-size: .6875rem; }
+
+  .token-display { min-height: 7rem; }
+  .token-display .code-input { font-size: clamp(1.3rem, 7vw, 1.8rem) !important; }
+  .token-validity { font-size: .6875rem !important; }
+  .entry-code-field { min-height: 4rem; }
+
+  .success-view { min-height: 12rem; }
+}
+
+@media (min-width: 481px) and (max-width: 767px) {
+  .app { padding-inline: clamp(1.25rem, 5vw, 1.75rem); }
+  .modal { padding-inline: clamp(1.25rem, 5vw, 1.75rem); }
+}
+
+@media (min-width: 768px) {
+  .modal {
+    width: min(calc(100% - 2rem), 36rem);
+    max-height: min(43rem, calc(100dvh - 2rem));
+  }
+
+  .interaction { padding-bottom: var(--tf-space-10); }
+  .section { margin-bottom: 3rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .modal { scroll-behavior: auto; }
+}

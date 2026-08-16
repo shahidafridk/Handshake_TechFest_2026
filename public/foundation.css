@@ -1,0 +1,509 @@
+/* Handshake.sh — TechFest Handshake Network foundation
+   This file intentionally contains only shared tokens and reusable primitives.
+   Page composition remains in the existing HTML files. */
+
+:root {
+  /* Colour: warm field paper, dark instrument ink, and a single signal accent. */
+  --tf-canvas: #f3f0e8;
+  --tf-surface: #fffdf7;
+  --tf-surface-raised: #fffaf0;
+  --tf-ink: #182326;
+  --tf-ink-muted: #60706d;
+  --tf-ink-faint: #64706b;
+  --tf-line: #c9d0c7;
+  --tf-line-strong: #98a49b;
+  --tf-signal: #b9482b;
+  --tf-signal-strong: #91361e;
+  --tf-verified: #26765e;
+  --tf-caution: #a96b19;
+  --tf-danger: #b84037;
+
+  /* Typography */
+  --tf-font-sans: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --tf-font-mono: "Space Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --tf-type-label: 0.6875rem;
+  --tf-type-meta: 0.75rem;
+  --tf-type-body: 0.9375rem;
+  --tf-type-title: clamp(1.75rem, 5vw, 2.625rem);
+  --tf-tracking-label: 0.12em;
+
+  /* Spatial scale */
+  --tf-space-1: 0.25rem;
+  --tf-space-2: 0.5rem;
+  --tf-space-3: 0.75rem;
+  --tf-space-4: 1rem;
+  --tf-space-5: 1.25rem;
+  --tf-space-6: 1.5rem;
+  --tf-space-8: 2rem;
+  --tf-space-10: 2.5rem;
+  --tf-page-gutter: clamp(1rem, 5vw, 1.5rem);
+
+  /* Geometry, elevation, and motion */
+  --tf-radius-control: 0.75rem;
+  --tf-radius-panel: 1.125rem;
+  --tf-radius-pill: 999px;
+  --tf-shadow-panel: 0 1px 0 rgb(255 255 255 / 82%) inset, 3px 4px 0 rgb(24 35 38 / 11%);
+  --tf-shadow-control: 0 1px 0 rgb(255 255 255 / 76%) inset, 2px 3px 0 rgb(24 35 38 / 14%);
+  --tf-shadow-pressed: 0 1px 0 rgb(24 35 38 / 10%) inset;
+  --tf-ease-out: cubic-bezier(.16, 1, .3, 1);
+  --tf-ease-spring: cubic-bezier(.22, 1, .36, 1);
+  --tf-duration-fast: 140ms;
+  --tf-duration-base: 240ms;
+  --tf-duration-slow: 420ms;
+}
+
+/* Compatibility aliases let existing page CSS adopt the system without changing JS or DOM. */
+:root {
+  --bg: var(--tf-canvas);
+  --surface: var(--tf-surface-raised);
+  --card: var(--tf-surface);
+  --text: var(--tf-ink);
+  --text-dim: var(--tf-ink-muted);
+  --placeholder: var(--tf-ink-faint);
+  --border: var(--tf-line);
+  --accent: var(--tf-signal);
+  --success: var(--tf-verified);
+  --warning: var(--tf-caution);
+  --button: var(--tf-ink);
+  --ease-spring: var(--tf-ease-spring);
+  --ease-out: var(--tf-ease-out);
+}
+
+/* Shared primitive language for subsequent page composition. */
+.tf-panel {
+  background: var(--tf-surface);
+  border: 1px solid var(--tf-line);
+  border-radius: var(--tf-radius-panel);
+  box-shadow: var(--tf-shadow-panel);
+}
+
+.tf-tech-label {
+  color: var(--tf-ink-muted);
+  font: 700 var(--tf-type-label)/1.2 var(--tf-font-mono);
+  letter-spacing: var(--tf-tracking-label);
+  text-transform: uppercase;
+}
+
+.tf-control,
+.tf-button {
+  min-height: 2.75rem;
+  border: 1px solid var(--tf-line-strong);
+  border-radius: var(--tf-radius-control);
+  font: 600 var(--tf-type-body)/1.2 var(--tf-font-sans);
+  transition: transform var(--tf-duration-fast) var(--tf-ease-spring), background-color var(--tf-duration-base) var(--tf-ease-out), border-color var(--tf-duration-base) var(--tf-ease-out), box-shadow var(--tf-duration-base) var(--tf-ease-out);
+}
+
+.tf-control {
+  background: var(--tf-surface);
+  color: var(--tf-ink);
+  box-shadow: var(--tf-shadow-control);
+}
+
+.tf-button {
+  background: var(--tf-ink);
+  color: #fffdf7;
+  box-shadow: var(--tf-shadow-control);
+}
+
+.tf-button--signal {
+  background: var(--tf-signal);
+  border-color: var(--tf-signal-strong);
+}
+
+.tf-control:hover,
+.tf-button:hover { transform: translate(-1px, -1px); }
+.tf-control:active,
+.tf-button:active { transform: translate(1px, 1px); box-shadow: var(--tf-shadow-pressed); }
+.tf-control:disabled,
+.tf-button:disabled { cursor: not-allowed; opacity: .48; transform: none; box-shadow: none; }
+
+.tf-status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--tf-space-2);
+  color: var(--tf-ink-muted);
+  font: 700 var(--tf-type-meta)/1.2 var(--tf-font-mono);
+  letter-spacing: .04em;
+}
+
+.tf-status::before {
+  width: .5rem;
+  height: .5rem;
+  border-radius: 50%;
+  background: currentColor;
+  content: "";
+}
+
+.tf-status--verified { color: var(--tf-verified); }
+.tf-status--caution { color: var(--tf-caution); }
+.tf-status--danger { color: var(--tf-danger); }
+
+/* Decorative motif: short rails and signal nodes, never content-bearing. */
+.tf-rail {
+  display: flex;
+  align-items: center;
+  gap: var(--tf-space-2);
+  color: var(--tf-line-strong);
+}
+
+.tf-rail::before,
+.tf-rail::after {
+  width: 1.75rem;
+  height: 1px;
+  background: currentColor;
+  content: "";
+}
+
+.tf-node {
+  width: .625rem;
+  height: .625rem;
+  border: 1px solid var(--tf-ink);
+  border-radius: 50%;
+  background: var(--tf-surface);
+  box-shadow: 2px 2px 0 var(--tf-signal);
+}
+
+:where(button, input, a):focus-visible {
+  outline: 2px solid var(--tf-signal);
+  outline-offset: 3px;
+}
+
+@media (max-width: 380px) {
+  :root { --tf-page-gutter: 1rem; --tf-space-10: 2rem; }
+}
+
+@media (min-width: 768px) {
+  :root { --tf-page-gutter: 1.5rem; --tf-space-10: 3rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: .01ms !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Active shared shell
+   Existing page-specific markup slots into this system; no new DOM is needed.
+   -------------------------------------------------------------------------- */
+
+html, body {
+  min-width: 320px;
+  overflow-x: hidden;
+}
+
+body {
+  background-color: var(--tf-canvas);
+  background-image:
+    linear-gradient(rgb(24 35 38 / 3%) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(24 35 38 / 3%) 1px, transparent 1px);
+  background-size: 24px 24px;
+  font-family: var(--tf-font-sans);
+}
+
+/* The supplied SVG remains the primary network motif; this keeps it legible,
+   quiet, and deliberately behind the interface. */
+.network-bg { opacity: .72; }
+.network-fade { opacity: .78; }
+
+.page,
+.app {
+  width: min(100%, 34rem);
+  margin-inline: auto;
+  padding-inline: var(--tf-page-gutter);
+}
+
+.page {
+  min-height: 100dvh;
+  padding-block: clamp(2rem, 7vh, 4.5rem);
+}
+
+.app {
+  min-height: 100dvh;
+  padding-top: clamp(1rem, 3vw, 1.5rem);
+  padding-bottom: max(4rem, env(safe-area-inset-bottom));
+}
+
+/* Common information hierarchy */
+.brand-caption,
+.count-caption,
+.section-head h3,
+.badge,
+.timeline-when {
+  font-family: var(--tf-font-mono);
+  letter-spacing: var(--tf-tracking-label);
+  text-transform: uppercase;
+}
+
+.section-head h3,
+.brand-caption,
+.count-caption {
+  font-size: var(--tf-type-label);
+}
+
+.subtitle,
+.welcome h1,
+.identity h1 {
+  color: var(--tf-ink);
+  text-wrap: balance;
+}
+
+/* Header: a shared, compact instrument strip. */
+.header {
+  position: relative;
+  isolation: isolate;
+  gap: var(--tf-space-3);
+  padding: var(--tf-space-3) var(--tf-space-4);
+  border: 1px solid var(--tf-line);
+  border-radius: var(--tf-radius-panel);
+  background: var(--tf-surface);
+  box-shadow: var(--tf-shadow-panel);
+}
+
+.header::after {
+  position: absolute;
+  right: var(--tf-space-4);
+  bottom: -1px;
+  width: 2.5rem;
+  height: 3px;
+  border-radius: var(--tf-radius-pill);
+  background: var(--tf-signal);
+  content: "";
+}
+
+.identity { min-width: 0; }
+.identity h1 { font-size: clamp(1.35rem, 6vw, 2rem); }
+.identity .handle {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.badge {
+  border-color: var(--tf-line-strong);
+  background: var(--tf-surface);
+  box-shadow: 1px 2px 0 rgb(24 35 38 / 10%);
+  font-size: var(--tf-type-label);
+}
+
+/* Panels are structural modules, not generic floating cards. */
+form,
+.section {
+  position: relative;
+  border-left: 2px solid var(--tf-line-strong);
+}
+
+form {
+  padding: var(--tf-space-5);
+  border: 1px solid var(--tf-line);
+  border-left: 3px solid var(--tf-signal);
+  border-radius: var(--tf-radius-panel);
+  background: var(--tf-surface);
+  box-shadow: var(--tf-shadow-panel);
+}
+
+.section {
+  padding-left: var(--tf-space-4);
+}
+
+.section::before {
+  position: absolute;
+  top: .125rem;
+  left: -5px;
+  width: .5rem;
+  height: .5rem;
+  border: 1px solid var(--tf-ink);
+  border-radius: 50%;
+  background: var(--tf-surface);
+  box-shadow: 2px 2px 0 var(--tf-signal);
+  content: "";
+}
+
+.section-head {
+  gap: var(--tf-space-3);
+  padding-bottom: var(--tf-space-2);
+  border-bottom: 1px solid var(--tf-line);
+}
+
+.section-head span {
+  color: var(--tf-ink-muted);
+  font-family: var(--tf-font-mono);
+}
+
+/* Controls share tactile borders, clear focus, and reliable touch sizing. */
+.input-wrap input,
+.code-input-wrap,
+.btn-continue,
+.btn-primary,
+.connect-btn,
+.icon-btn,
+.mini-btn,
+.modal-close,
+.tab-btn {
+  transition: transform var(--tf-duration-fast) var(--tf-ease-spring), background-color var(--tf-duration-base) var(--tf-ease-out), border-color var(--tf-duration-base) var(--tf-ease-out), box-shadow var(--tf-duration-base) var(--tf-ease-out), color var(--tf-duration-base) var(--tf-ease-out), opacity var(--tf-duration-base) var(--tf-ease-out);
+}
+
+.input-wrap input,
+.code-input-wrap {
+  border-color: var(--tf-line-strong);
+  background: var(--tf-surface);
+  box-shadow: var(--tf-shadow-pressed);
+}
+
+.input-wrap input {
+  min-height: 3.25rem;
+}
+
+.code-input-wrap {
+  min-height: 3.5rem;
+}
+
+.input-wrap input:focus,
+.code-input-wrap:focus-within {
+  border-color: var(--tf-signal);
+  box-shadow: 0 0 0 3px rgb(185 72 43 / 16%), var(--tf-shadow-pressed);
+}
+
+.btn-continue,
+.btn-primary,
+.connect-btn {
+  min-height: 3rem;
+  border: 1px solid transparent;
+  box-shadow: var(--tf-shadow-control);
+}
+
+.btn-primary,
+.connect-btn {
+  background: var(--tf-signal);
+  border-color: var(--tf-signal-strong);
+}
+
+.btn-continue { background: var(--tf-ink); }
+
+.btn-continue:hover,
+.btn-primary:hover,
+.connect-btn:hover {
+  transform: translate(-1px, -2px);
+  box-shadow: 3px 4px 0 rgb(24 35 38 / 18%);
+}
+
+.btn-continue:active,
+.btn-primary:active,
+.connect-btn:active {
+  transform: translate(1px, 1px) scale(.99);
+  box-shadow: var(--tf-shadow-pressed);
+}
+
+.icon-btn,
+.mini-btn,
+.modal-close {
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  border-color: var(--tf-line-strong);
+  background: var(--tf-surface);
+  box-shadow: 1px 2px 0 rgb(24 35 38 / 10%);
+}
+
+.icon-btn:hover,
+.mini-btn:hover,
+.modal-close:hover {
+  border-color: var(--tf-ink);
+  background: var(--tf-surface-raised);
+  transform: translate(-1px, -1px);
+}
+
+.tab-switcher {
+  border-color: var(--tf-line-strong);
+  background: var(--tf-canvas);
+}
+
+.tab-btn {
+  min-height: 2.75rem;
+  color: var(--tf-ink-muted);
+}
+
+.tab-btn.active {
+  color: var(--tf-ink);
+  box-shadow: 1px 2px 0 rgb(24 35 38 / 12%);
+}
+
+/* Live data remains visually contained when names are longer than the shell. */
+.row-name,
+.row-dept,
+.timeline-name,
+.timeline-meta,
+.timeline-when {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.row,
+.timeline-row {
+  border-bottom-color: var(--tf-line);
+}
+
+.avatar,
+.check {
+  background: var(--tf-surface);
+  border-color: var(--tf-line-strong);
+}
+
+.count-block {
+  position: relative;
+  margin-inline: var(--tf-space-4);
+  padding-block: var(--tf-space-5) var(--tf-space-6);
+  border-block: 1px solid var(--tf-line);
+}
+
+.count-number {
+  color: var(--tf-ink);
+  font-size: clamp(3.25rem, 16vw, 4.5rem);
+}
+
+/* Modal: bottom-docked service panel with a safe mobile height. */
+.modal {
+  max-height: min(43rem, calc(100dvh - env(safe-area-inset-top) - 1rem));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-bottom: max(2.25rem, calc(1.5rem + env(safe-area-inset-bottom)));
+  border-color: var(--tf-line-strong);
+  background: var(--tf-surface);
+  box-shadow: 0 -1px 0 rgb(255 255 255 / 78%) inset, 0 -10px 30px rgb(24 35 38 / 18%);
+}
+
+.modal-handle { background: var(--tf-line-strong); }
+.success-ring { border-color: var(--tf-verified); box-shadow: 2px 2px 0 rgb(38 118 94 / 20%); }
+
+/* Keep the inherited network pulse aligned with the active signal token. */
+@keyframes packetFlash {
+  0%, 7%, 100% { fill-opacity: var(--op); transform: scale(1); }
+  2% { fill: var(--tf-signal); fill-opacity: .55; transform: scale(2.6); }
+}
+
+@media (max-width: 380px) {
+  .page,
+  .app { padding-inline: var(--tf-page-gutter); }
+
+  .header {
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .header > :last-child { margin-left: auto; }
+  .modal { border-radius: 1.25rem 1.25rem 0 0; }
+}
+
+@media (min-width: 768px) {
+  .page,
+  .app { width: min(100%, 36rem); }
+
+  .modal {
+    margin-bottom: var(--tf-space-4);
+    border-bottom: 1px solid var(--tf-line-strong);
+    border-radius: var(--tf-radius-panel);
+  }
+}

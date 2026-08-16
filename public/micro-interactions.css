@@ -1,0 +1,203 @@
+/* State-driven motion layer. All motion is one-shot and tied to existing UI state. */
+
+@keyframes tf-press-in {
+  0% { transform: translate(0, 0) scale(1); }
+  55% { transform: translate(1px, 2px) scale(.985); }
+  100% { transform: translate(0, 0) scale(1); }
+}
+
+@keyframes tf-focus-rail {
+  from { transform: scaleX(.2); opacity: .2; }
+  to { transform: scaleX(1); opacity: 1; }
+}
+
+@keyframes tf-status-arrive {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes tf-token-seal {
+  0% { opacity: .45; transform: translateY(5px) scale(.985); }
+  65% { opacity: 1; transform: translateY(-1px) scale(1.008); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+@keyframes tf-verify-sweep {
+  0% { box-shadow: inset 0 0 0 0 rgb(169 107 25 / 0%); }
+  45% { box-shadow: inset 0 -4px 0 rgb(169 107 25 / 36%); }
+  100% { box-shadow: inset 0 0 0 0 rgb(169 107 25 / 0%); }
+}
+
+@keyframes tf-error-nudge {
+  0%, 100% { transform: translateX(0); }
+  30% { transform: translateX(-4px); }
+  65% { transform: translateX(3px); }
+}
+
+@keyframes tf-expire-stamp {
+  0% { opacity: 1; }
+  45% { opacity: .35; transform: scale(.99); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes tf-success-settle {
+  0% { opacity: 0; transform: translateY(8px) scale(.97); }
+  70% { opacity: 1; transform: translateY(-1px) scale(1.01); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+/* Controls: tactile, short transform-only feedback. */
+button,
+input,
+.badge,
+.footer-note a {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button:not(:disabled):active,
+.footer-note a:active {
+  animation: tf-press-in 170ms var(--tf-ease-spring);
+}
+
+button:disabled {
+  transition: opacity var(--tf-duration-fast) var(--tf-ease-out), filter var(--tf-duration-fast) var(--tf-ease-out);
+}
+
+.input-wrap,
+.code-input-wrap {
+  position: relative;
+}
+
+.input-wrap::after,
+.code-input-wrap::after {
+  position: absolute;
+  right: var(--tf-space-3);
+  bottom: -1px;
+  left: var(--tf-space-3);
+  height: 2px;
+  border-radius: var(--tf-radius-pill);
+  background: var(--tf-signal);
+  content: "";
+  opacity: 0;
+  pointer-events: none;
+  transform: scaleX(.2);
+  transform-origin: center;
+}
+
+.input-wrap:focus-within::after,
+.code-input-wrap:focus-within::after {
+  opacity: 1;
+  animation: tf-focus-rail 220ms var(--tf-ease-out) forwards;
+}
+
+@media (hover: hover) {
+  .row:hover .avatar,
+  .timeline-row:hover .check {
+    border-color: var(--tf-ink);
+    transform: translate(-1px, -1px);
+  }
+
+  .row:hover::before { transform: scale(1.35); }
+}
+
+.avatar,
+.check,
+.row::before {
+  transition: transform var(--tf-duration-fast) var(--tf-ease-spring), border-color var(--tf-duration-base) var(--tf-ease-out), background-color var(--tf-duration-base) var(--tf-ease-out);
+}
+
+/* Login: existing loading and error classes supply the timing signal. */
+.btn-continue.loading {
+  box-shadow: 0 0 0 3px rgb(185 72 43 / 14%), var(--tf-shadow-control);
+}
+
+.error-banner[style*="block"] {
+  animation: tf-error-nudge 320ms var(--tf-ease-spring);
+}
+
+.beacon-wrap.connecting {
+  filter: saturate(1.08);
+  transition: filter var(--tf-duration-base) var(--tf-ease-out), transform var(--tf-duration-base) var(--tf-ease-spring);
+}
+
+/* Dashboard: arrival, resolution, and log updates use existing rendered classes. */
+.row {
+  transform-origin: left center;
+}
+
+.row.leaving::before {
+  background: var(--tf-ink-muted);
+  transform: scale(.7);
+  transition: transform var(--tf-duration-base) var(--tf-ease-out), background-color var(--tf-duration-base) var(--tf-ease-out);
+}
+
+.row.leaving .icon-btn {
+  pointer-events: none;
+  opacity: .55;
+}
+
+.timeline-row {
+  transform-origin: left center;
+}
+
+.empty-note {
+  animation: tf-status-arrive 300ms var(--tf-ease-out) both;
+}
+
+.count-number {
+  transition: color var(--tf-duration-base) var(--tf-ease-out), text-shadow var(--tf-duration-base) var(--tf-ease-out);
+}
+
+/* Handshake protocol states: selectors mirror the existing data-protocol-state values. */
+.modal[data-protocol-state] .protocol-status {
+  animation: tf-status-arrive 240ms var(--tf-ease-out) both;
+}
+
+.modal[data-protocol-state="generating"] .token-display {
+  animation: tf-status-arrive 220ms var(--tf-ease-out) both;
+}
+
+.modal[data-protocol-state="active"] .token-display {
+  animation: tf-token-seal 360ms var(--tf-ease-spring) both;
+}
+
+.modal[data-protocol-state="verifying"] .entry-code-field {
+  animation: tf-verify-sweep 620ms var(--tf-ease-out) both;
+}
+
+.modal[data-protocol-state="connected"] .success-view.show {
+  animation: tf-success-settle 420ms var(--tf-ease-spring) both;
+}
+
+.modal[data-protocol-state="expired"] .token-display {
+  animation: tf-expire-stamp 420ms var(--tf-ease-out) both;
+}
+
+.modal[data-protocol-state="error"] .entry-code-field,
+.modal[data-protocol-state="error"] .token-display {
+  animation: tf-error-nudge 320ms var(--tf-ease-spring) both;
+}
+
+.modal[data-protocol-state="copy-error"] .copy-code-btn {
+  border-color: var(--tf-danger);
+  animation: tf-error-nudge 320ms var(--tf-ease-spring) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button:not(:disabled):active,
+  .input-wrap:focus-within::after,
+  .code-input-wrap:focus-within::after,
+  .error-banner[style*="block"],
+  .empty-note,
+  .modal[data-protocol-state] .protocol-status,
+  .modal[data-protocol-state="generating"] .token-display,
+  .modal[data-protocol-state="active"] .token-display,
+  .modal[data-protocol-state="verifying"] .entry-code-field,
+  .modal[data-protocol-state="connected"] .success-view.show,
+  .modal[data-protocol-state="expired"] .token-display,
+  .modal[data-protocol-state="error"] .entry-code-field,
+  .modal[data-protocol-state="error"] .token-display,
+  .modal[data-protocol-state="copy-error"] .copy-code-btn {
+    animation: none;
+  }
+}
