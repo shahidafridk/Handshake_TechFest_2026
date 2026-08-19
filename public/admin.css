@@ -417,32 +417,15 @@ body.admin-body {
   margin-top: auto;
 }
 
-.sidebar-user-block {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-bottom: 10px;
-  padding: 8px 10px;
-  background: var(--admin-bg-surface);
-  border: 1px solid var(--admin-border-default);
-  border-radius: var(--admin-radius-md);
+.sidebar-user-block,
+.sidebar-logout-btn {
+  display: none !important;
 }
 
 .sidebar-user-info {
   display: flex;
   flex-direction: column;
   gap: 2px;
-}
-
-.sidebar-logout-btn {
-  margin-bottom: 10px;
-  height: 38px;
-  font-size: 12px;
-  font-weight: 800 !important;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
 }
 
 .admin-version-info {
@@ -1372,6 +1355,28 @@ body.admin-body {
 
   .admin-sidebar.open {
     transform: translateX(0);
+  }
+
+  .sidebar-user-block {
+    display: flex !important;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+    padding: 8px 10px;
+    background: var(--admin-bg-surface);
+    border: 1px solid var(--admin-border-default);
+    border-radius: var(--admin-radius-md);
+  }
+
+  .sidebar-logout-btn {
+    display: flex !important;
+    margin-bottom: 10px;
+    height: 38px;
+    font-size: 12px;
+    font-weight: 800 !important;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
   }
 
   .admin-workspace {
