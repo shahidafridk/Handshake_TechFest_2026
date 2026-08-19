@@ -12,6 +12,7 @@
     "migrate:deploy": "prisma migrate deploy",
     "migrate:dev": "prisma migrate dev",
     "db:seed": "node prisma/seed.js",
+    "db:seed-admins": "node scripts/seed-admins.js",
     "db:reset": "node scripts/reset-db.js"
   },
   "prisma": {
