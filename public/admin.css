@@ -1532,25 +1532,10 @@ body.admin-body {
   }
 
   .admin-user-info {
-    display: none !important;
-  }
-
-  .admin-status-indicator-top {
-    display: none !important;
-  }
-
-  .btn-header-logout {
-    padding: 6px 12px !important;
-    font-size: 11.5px !important;
-    font-weight: 800 !important;
-    background: var(--admin-danger-bg) !important;
-    border: 1.5px solid var(--admin-danger-border) !important;
-    color: var(--admin-danger) !important;
-    border-radius: var(--admin-radius-md) !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 5px !important;
-    flex-shrink: 0 !important;
+    display: flex !important;
+    align-items: center;
+    gap: 6px;
+    padding: 3px 8px;
   }
 
   .btn-header-logout span {
