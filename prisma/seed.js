@@ -16,15 +16,15 @@ const SEED_PASSWORD = process.env.SEED_PASSWORD;
 const SEED_ALLOW_REMOTE = process.env.SEED_ALLOW_REMOTE === 'true';
 
 const PARTICIPANTS = [
-  { username: 'yadu24', fullName: 'Yadu Krishnan', college: 'IIT Bombay', department: 'Computer Science', year: 3, email: 'yadu24@example.edu' },
-  { username: 'arya07', fullName: 'Arya Menon', college: 'BITS Pilani', department: 'Electronics', year: 2, email: 'arya07@example.edu' },
-  { username: 'rahul12', fullName: 'Rahul Verma', college: 'VIT Vellore', department: 'Computer Science', year: 4, email: 'rahul12@example.edu' },
-  { username: 'meera19', fullName: 'Meera Nair', college: 'NIT Trichy', department: 'Mechanical', year: 2, email: 'meera19@example.edu' },
-  { username: 'devika03', fullName: 'Devika Rao', college: 'IIIT Hyderabad', department: 'Computer Science', year: 3, email: 'devika03@example.edu' },
-  { username: 'nikhil88', fullName: 'Nikhil Singh', college: 'Manipal Institute', department: 'Information Technology', year: 1, email: 'nikhil88@example.edu' },
-  { username: 'priya21', fullName: 'Priya Sharma', college: 'IIT Delhi', department: 'Design', year: 4, email: 'priya21@example.edu' },
-  { username: 'farhan15', fullName: 'Farhan Ali', college: 'SRM Chennai', department: 'Computer Science', year: 2, email: 'farhan15@example.edu' },
-  { username: 'tara09', fullName: 'Tara Joseph', college: 'IIT Bombay', department: 'Civil', year: 3, email: 'tara09@example.edu' },
+  { username: 'yadu24', fullName: 'Yadu Krishnan', college: 'IIT Bombay', department: 'Computer Science', year: 3, phone: '9876543210' },
+  { username: 'arya07', fullName: 'Arya Menon', college: 'BITS Pilani', department: 'Electronics', year: 2, phone: '9876543211' },
+  { username: 'rahul12', fullName: 'Rahul Verma', college: 'VIT Vellore', department: 'Computer Science', year: 4, phone: '9876543212' },
+  { username: 'meera19', fullName: 'Meera Nair', college: 'NIT Trichy', department: 'Mechanical', year: 2, phone: '9876543213' },
+  { username: 'devika03', fullName: 'Devika Rao', college: 'IIIT Hyderabad', department: 'Computer Science', year: 3, phone: '9876543214' },
+  { username: 'nikhil88', fullName: 'Nikhil Singh', college: 'Manipal Institute', department: 'Information Technology', year: 1, phone: '9876543215' },
+  { username: 'priya21', fullName: 'Priya Sharma', college: 'IIT Delhi', department: 'Design', year: 4, phone: '9876543216' },
+  { username: 'farhan15', fullName: 'Farhan Ali', college: 'SRM Chennai', department: 'Computer Science', year: 2, phone: '9876543217' },
+  { username: 'tara09', fullName: 'Tara Joseph', college: 'IIT Bombay', department: 'Civil', year: 3, phone: '9876543218' },
 ];
 
 async function upsertUser(data, overrides = {}) {
@@ -71,7 +71,7 @@ async function main() {
 
   console.log('Seeding admin user...');
   const admin = await upsertUser(
-    { username: 'admin', fullName: 'Event Admin', college: 'Organizing Committee', email: 'admin@handshake.sh' },
+    { username: 'admin', fullName: 'Event Admin', college: 'Organizing Committee', phone: '9999999999' },
     { isAdmin: true }
   );
 

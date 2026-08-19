@@ -15,7 +15,11 @@ const AppError = require('./utils/AppError');
 const routes = require('./routes');
 const { sendSuccess } = require('./utils/apiResponse');
 
+const compression = require('compression');
+
 const app = express();
+
+app.use(compression());
 
 // Railway and Render both terminate TLS and proxy requests to the app —
 // without this, req.ip (used for IP-based rate limiting in Module 2's
@@ -65,8 +69,8 @@ app.use(helmet({
   permittedCrossDomainPolicies: { permittedPolicies: 'none' },
 }));
 
-// Serve static HTML/CSS/JS files from the 'public' folder
-app.use(express.static(path.join(__dirname, '../public')));
+// Serve static HTML/CSS/JS files from the 'public' folder with cache control
+app.use(express.static(path.join(__dirname, '../public'), { maxAge: '1h' }));
 
 // In production, only the explicitly configured origins are allowed — if
 // ALLOWED_ORIGINS is empty, every cross-origin request is rejected, which is

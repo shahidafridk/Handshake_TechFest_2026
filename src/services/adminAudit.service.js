@@ -16,4 +16,26 @@ async function logAdminAction({ adminId, action, targetUserId = null, metadata =
   }
 }
 
-module.exports = { logAdminAction };
+async function getAuditLogs({ limit = 50 } = {}) {
+  const logs = await prisma.adminAction.findMany({
+    take: limit,
+    orderBy: { createdAt: 'desc' },
+    include: {
+      admin: {
+        select: { username: true, fullName: true },
+      },
+    },
+  });
+
+  return logs.map((log) => ({
+    id: log.id,
+    action: log.action,
+    admin_name: log.admin?.fullName || log.admin?.username || 'Admin',
+    admin_username: log.admin?.username || 'admin',
+    target_user_id: log.targetUserId,
+    metadata: log.metadata,
+    created_at: log.createdAt,
+  }));
+}
+
+module.exports = { logAdminAction, getAuditLogs };

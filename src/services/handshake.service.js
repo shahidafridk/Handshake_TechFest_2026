@@ -167,7 +167,7 @@ async function getHistory(userId, limit) {
     const other = isInitiator ? row.responder : row.initiator;
     return {
       handshake_id: row.id,
-      connected_with: { full_name: other.fullName, college: other.college },
+      connected_with: { full_name: other?.fullName || '[Deleted User]', college: other?.college || 'N/A' },
       created_at: row.createdAt,
     };
   });
@@ -184,12 +184,13 @@ async function getRecentForHandshakeList(userId) {
   });
 
   return rows.map((row) => {
-    const other = row.initiator.id === userId ? row.responder : row.initiator;
+    const isInitiator = row.initiator?.id === userId;
+    const other = isInitiator ? row.responder : row.initiator;
     return {
       id: row.id,
-      full_name: other.fullName,
-      username: other.username,
-      department: other.department || 'Attendee',
+      full_name: other?.fullName || '[Deleted User]',
+      username: other?.username || 'deleted',
+      department: other?.department || 'Attendee',
       when: new Date(row.createdAt).toLocaleDateString(),
     };
   });

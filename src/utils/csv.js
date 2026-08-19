@@ -11,8 +11,10 @@ const HEADER_ALIASES = {
   fullname: 'fullName',
   'full name': 'fullName',
 
-  email: 'email',
-  'email address': 'email',
+  phone: 'phone',
+  'phone number': 'phone',
+  mobile: 'phone',
+  contact: 'phone',
 
   college: 'college',
   'college name': 'college',

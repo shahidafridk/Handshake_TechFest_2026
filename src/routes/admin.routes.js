@@ -13,6 +13,10 @@ const {
   participantQuerySchema,
   usernameParamSchema,
   exportQuerySchema,
+  createParticipantSchema,
+  updateParticipantSchema,
+  resetPasswordSchema,
+  checkUsernameQuerySchema,
 } = require('../validators/admin.schema');
 
 const router = express.Router();
@@ -31,6 +35,14 @@ const upload = multer({
 });
 
 router.get('/participants', validate(participantQuerySchema, 'query'), participantsController.list);
+router.get('/participants/check-username', validate(checkUsernameQuerySchema, 'query'), participantsController.checkUsername);
+router.post('/participants', validate(createParticipantSchema), participantsController.create);
+router.put(
+  '/participants/:username',
+  validate(usernameParamSchema, 'params'),
+  validate(updateParticipantSchema),
+  participantsController.update
+);
 router.put(
   '/participants/:username/activate',
   validate(usernameParamSchema, 'params'),
@@ -44,12 +56,19 @@ router.put(
 router.put(
   '/participants/:username/reset-password',
   validate(usernameParamSchema, 'params'),
+  validate(resetPasswordSchema),
   participantsController.resetPassword
+);
+router.delete(
+  '/participants/:username',
+  validate(usernameParamSchema, 'params'),
+  participantsController.remove
 );
 
 router.post('/import', upload.single('file'), importController.importCsv);
 router.get('/credentials/export', validate(exportQuerySchema, 'query'), importController.exportCredentials);
 
 router.get('/dashboard', dashboardController.getDashboard);
+router.get('/audit-logs', dashboardController.listAuditLogs);
 
 module.exports = router;

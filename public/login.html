@@ -57,8 +57,32 @@
           <span class="btn-label">SIGN IN</span>
         </button>
       </div>
+
+      <div class="login-contact-note">
+        <span class="note-text">Need an account?</span>
+        <button id="contactAdminBtn" class="contact-admin-link" type="button">Contact an Admin</button>
+      </div>
     </form>
   </main>
+
+  <div class="modal-backdrop" id="accessInfoModal" hidden role="dialog" aria-modal="true" aria-labelledby="accessInfoTitle">
+    <div class="chassis-card modal-card">
+      <div class="hazard-stripe" aria-hidden="true"></div>
+      <div class="modal-header">
+        <span class="modal-icon" aria-hidden="true">ℹ️</span>
+        <h2 class="modal-title" id="accessInfoTitle">ACCOUNT ACCESS</h2>
+      </div>
+      <div class="modal-body">
+        <p class="modal-message" id="accessInfoMessage">
+          Participant accounts are created by TechFest administrators only. If you need an account, please approach or contact an event administrator. Self-registration is not available.
+        </p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-beveled btn-orange" id="closeAccessInfoBtn" type="button">RETURN TO SIGN IN</button>
+      </div>
+    </div>
+  </div>
+
   <script src="login.js"></script>
 </body>
 </html>

@@ -68,6 +68,11 @@ window.addEventListener('DOMContentLoaded', () => {
       if (ui.handle) ui.handle.textContent = `@${username}`;
       if (ui.college) { ui.college.hidden = !college; if (college) ui.college.textContent = college; }
       if (ui.collegeSep) ui.collegeSep.hidden = !college;
+      const isAdmin = Boolean(user.isAdmin || user.is_admin);
+      if (isAdmin) {
+        window.location.replace('admin.html');
+        return;
+      }
       animateCount(user.handshakeCount ?? user.handshake_count ?? 0); setLoadFailure('profile', false);
     } catch { if (id === profileRequest) setLoadFailure('profile', true); }
   }
@@ -203,5 +208,97 @@ window.addEventListener('DOMContentLoaded', () => {
   ui.nodes?.addEventListener('click', (event) => { const node = event.target.closest('[data-connection-index]'); if (node) showConnectionDetail(Number(node.dataset.connectionIndex)); });
   ui.input?.addEventListener('input', () => { ui.input.value = ui.input.value.toUpperCase(); if (ui.connect) ui.connect.disabled = !ui.input.value.trim(); if (ui.input.value.trim()) setProtocol('entry', 'Code ready.'); });
   document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && expiry) startTimer(expiry); });
+
+  const createForm = $('createParticipantForm');
+  const createBtn = $('createParticipantBtn');
+  const formStatus = $('adminFormStatus');
+  const adminCreatedModal = $('adminCreatedModal');
+  const closeAdminCreatedBtn = $('closeAdminCreatedBtn');
+
+  function showAdminFormStatus(message, isSuccess = false) {
+    if (!formStatus) return;
+    formStatus.textContent = message;
+    formStatus.className = `admin-form-status ${isSuccess ? 'success' : 'error'}`;
+    formStatus.hidden = false;
+  }
+
+  function hideAdminFormStatus() {
+    if (formStatus) formStatus.hidden = true;
+  }
+
+  closeAdminCreatedBtn?.addEventListener('click', () => {
+    if (adminCreatedModal) adminCreatedModal.hidden = true;
+  });
+  adminCreatedModal?.addEventListener('click', (e) => {
+    if (e.target === adminCreatedModal) adminCreatedModal.hidden = true;
+  });
+
+  createForm?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    hideAdminFormStatus();
+
+    const fullName = $('adminFullName')?.value.trim();
+    const email = $('adminEmail')?.value.trim();
+    const college = $('adminCollege')?.value.trim();
+    const department = $('adminDept')?.value.trim() || undefined;
+    const username = $('adminUsername')?.value.trim() || undefined;
+    const password = $('adminPassword')?.value || undefined;
+
+    if (!fullName || !email || !college) {
+      showAdminFormStatus('Full Name, Email, and College are required fields.');
+      return;
+    }
+
+    if (createBtn) {
+      createBtn.disabled = true;
+      createBtn.innerHTML = '<span class="spinner" style="display:inline-block; border-color: rgba(255,255,255,0.4); border-top-color:#FFFFFF;"></span> <span>CREATING ACCOUNT…</span>';
+    }
+
+    try {
+      const payload = { fullName, email, college };
+      if (department) payload.department = department;
+      if (username) payload.username = username;
+      if (password) payload.password = password;
+
+      const response = await fetch('/api/admin/participants', {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      const result = await readJson(response);
+
+      if (response.status === 401 || response.status === 403) {
+        showAdminFormStatus('Admin authorization required. Access denied.');
+        return;
+      }
+
+      if (!response.ok || !result.success) {
+        const msg = result.message || result.error?.message || 'Could not create participant account.';
+        showAdminFormStatus(msg);
+        return;
+      }
+
+      const p = result.data?.participant || {};
+      const initialPw = result.data?.initial_password || '';
+
+      if ($('createdUsernameVal')) $('createdUsernameVal').textContent = `@${p.username}`;
+      if ($('createdPasswordVal')) $('createdPasswordVal').textContent = initialPw;
+      if ($('createdNameVal')) $('createdNameVal').textContent = p.full_name || fullName;
+      if ($('createdCollegeVal')) $('createdCollegeVal').textContent = p.college || college;
+
+      if (adminCreatedModal) adminCreatedModal.hidden = false;
+      createForm.reset();
+
+    } catch {
+      showAdminFormStatus('Network error. Failed to reach the server.');
+    } finally {
+      if (createBtn) {
+        createBtn.disabled = false;
+        createBtn.innerHTML = '<span>CREATE PARTICIPANT ACCOUNT</span>';
+      }
+    }
+  });
+
   Promise.all([loadProfile(), loadRecent()]); window.setInterval(loadRecent, 30000);
 });

@@ -35,9 +35,9 @@ async function importParticipants(csvText, adminId) {
   }
 
   let imported = 0;
-  let duplicateEmails = 0;
+  let duplicatePhones = 0;
   let invalidRows = 0;
-  const seenEmailsInFile = new Set();
+  const seenPhonesInFile = new Set();
   const reservedUsernamesInBatch = new Set();
   const credentials = [];
 
@@ -49,16 +49,18 @@ async function importParticipants(csvText, adminId) {
     }
     const row = parsed.data;
 
-    if (seenEmailsInFile.has(row.email)) {
-      duplicateEmails++;
-      continue;
-    }
-    seenEmailsInFile.add(row.email);
+    if (row.phone) {
+      if (seenPhonesInFile.has(row.phone)) {
+        duplicatePhones++;
+        continue;
+      }
+      seenPhonesInFile.add(row.phone);
 
-    const existing = await prisma.user.findUnique({ where: { email: row.email } });
-    if (existing) {
-      duplicateEmails++;
-      continue;
+      const existing = await prisma.user.findUnique({ where: { phone: row.phone } });
+      if (existing) {
+        duplicatePhones++;
+        continue;
+      }
     }
 
     const username = await generateUniqueUsername(row.fullName, reservedUsernamesInBatch);
@@ -73,7 +75,7 @@ async function importParticipants(csvText, adminId) {
         college: row.college,
         department: row.department,
         year: row.year,
-        email: row.email,
+        phone: row.phone || null,
       },
     });
 
@@ -94,14 +96,14 @@ async function importParticipants(csvText, adminId) {
   await logAdminAction({
     adminId,
     action: 'import',
-    metadata: { imported, duplicate_emails: duplicateEmails, invalid_rows: invalidRows },
+    metadata: { imported, duplicate_phones: duplicatePhones, invalid_rows: invalidRows },
   });
 
   return {
     summary: {
       imported,
-      skipped: duplicateEmails + invalidRows,
-      duplicate_emails: duplicateEmails,
+      skipped: duplicatePhones + invalidRows,
+      duplicate_phones: duplicatePhones,
       invalid_rows: invalidRows,
     },
     // null when nothing was actually imported — nothing to export.

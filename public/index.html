@@ -33,7 +33,7 @@
     <!-- User Profile Chassis Panel -->
     <section class="chassis-card identity-panel" aria-labelledby="dashboardTitle">
       <div class="user-info">
-        <div class="user-bracket-tag">[ PARTICIPANT PROFILE ]</div>
+        <div class="user-bracket-tag" id="userRoleTag">[ PARTICIPANT PROFILE ]</div>
         <h1 class="user-name" id="dashboardTitle"><span id="userDisplayName">Participant</span></h1>
         <p class="user-meta">
           <span id="userHandle" class="user-handle">@participant</span>
@@ -149,6 +149,29 @@
       </div>
       <div class="modal-footer">
         <button class="btn btn-beveled btn-orange" id="closeSafetyModalBtn" type="button">UNDERSTOOD</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Created Participant Modal -->
+  <div class="modal-backdrop" id="adminCreatedModal" hidden role="dialog" aria-modal="true" aria-labelledby="adminCreatedTitle">
+    <div class="chassis-card modal-card">
+      <div class="hazard-stripe" aria-hidden="true"></div>
+      <div class="modal-header">
+        <span class="modal-icon" aria-hidden="true">✅</span>
+        <h3 class="modal-title" id="adminCreatedTitle">ACCOUNT CREATED</h3>
+      </div>
+      <div class="modal-body">
+        <p style="font-weight:700; margin-bottom:10px; font-size:13px; color:var(--text-dark);">Share these credentials with the participant:</p>
+        <div class="crt-stat-box" style="flex-direction:column; align-items:flex-start; gap:6px; padding:12px;">
+          <div style="color:#FFF; font-size:13px;"><span style="color:var(--text-muted);">USERNAME:</span> <strong id="createdUsernameVal" style="color:var(--orange-light); font-family:var(--font-mono);"></strong></div>
+          <div style="color:#FFF; font-size:13px;"><span style="color:var(--text-muted);">PASSWORD:</span> <strong id="createdPasswordVal" style="color:var(--orange-light); font-family:var(--font-mono);"></strong></div>
+          <div style="color:#FFF; font-size:13px;"><span style="color:var(--text-muted);">NAME:</span> <span id="createdNameVal" style="font-weight:700;"></span></div>
+          <div style="color:#FFF; font-size:13px;"><span style="color:var(--text-muted);">COLLEGE:</span> <span id="createdCollegeVal" style="font-weight:700;"></span></div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-beveled btn-orange" id="closeAdminCreatedBtn" type="button">DONE</button>
       </div>
     </div>
   </div>

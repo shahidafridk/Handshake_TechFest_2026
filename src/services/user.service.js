@@ -51,7 +51,7 @@ function toPublicProfile(user, rank) {
     college: user.college,
     department: user.department,
     year: user.year,
-    email: user.email,
+    phone: user.phone,
     profile_photo_url: user.profilePhotoUrl,
     handshake_count: user.handshakeCount,
     rank,

@@ -5,7 +5,12 @@ const { z } = require('zod');
 // not every form export collects them.
 const csvRowSchema = z.object({
   fullName: z.string().trim().min(1, 'Full name is required'),
-  email: z.string().trim().toLowerCase().email('Invalid email address'),
+  phone: z
+    .string()
+    .trim()
+    .optional()
+    .or(z.literal(''))
+    .transform((v) => (v ? v : undefined)),
   college: z.string().trim().min(1, 'College is required'),
   department: z
     .string()
@@ -32,9 +37,104 @@ const exportQuerySchema = z.object({
   batchId: z.string().uuid('Invalid batch id'),
 });
 
+const createParticipantSchema = z
+  .object({
+    fullName: z.string().trim().min(1, 'Full name is required').max(100),
+    username: z
+      .string()
+      .trim()
+      .min(1, 'Username is required')
+      .max(50, 'Username too long')
+      .regex(/^[a-zA-Z0-9_-]+$/, 'Username can only contain alphanumeric characters, underscores, and hyphens'),
+    password: z.string().min(6, 'Password must be at least 6 characters').max(200),
+  phone: z
+    .string()
+    .trim()
+    .optional()
+    .or(z.literal(''))
+    .transform((v) => (v ? v : undefined)),
+    college: z
+      .string()
+      .trim()
+      .max(100)
+      .optional()
+      .or(z.literal(''))
+      .transform((v) => (v ? v : undefined)),
+    department: z
+      .string()
+      .trim()
+      .max(100)
+      .optional()
+      .or(z.literal(''))
+      .transform((v) => (v ? v : undefined)),
+    year: z.coerce.number().int().positive().optional().catch(undefined),
+  })
+  .strict();
+
+const updateParticipantSchema = z
+  .object({
+    fullName: z.string().trim().min(1, 'Full name cannot be empty').max(100).optional(),
+    username: z
+      .string()
+      .trim()
+      .min(1, 'Username is required')
+      .max(50, 'Username too long')
+      .regex(/^[a-zA-Z0-9_-]+$/, 'Username can only contain alphanumeric characters, underscores, and hyphens')
+      .optional(),
+    phone: z
+      .string()
+      .trim()
+      .optional()
+      .or(z.literal(''))
+      .transform((v) => (v ? v : undefined)),
+    college: z
+      .string()
+      .trim()
+      .max(100)
+      .optional()
+      .or(z.literal(''))
+      .transform((v) => (v ? v : undefined)),
+    department: z
+      .string()
+      .trim()
+      .max(100)
+      .optional()
+      .or(z.literal(''))
+      .transform((v) => (v ? v : undefined)),
+    password: z
+      .string()
+      .min(6, 'Password must be at least 6 characters')
+      .max(200)
+      .optional()
+      .or(z.literal(''))
+      .transform((v) => (v ? v : undefined)),
+  })
+  .strict();
+
+const checkUsernameQuerySchema = z.object({
+  username: z.string().trim().min(1).max(50),
+  excludeUsername: z.string().trim().max(50).optional(),
+});
+
+const resetPasswordSchema = z
+  .object({
+    password: z
+      .string()
+      .min(8, 'Password must be at least 8 characters')
+      .max(200)
+      .optional()
+      .or(z.literal(''))
+      .transform((v) => (v ? v : undefined)),
+  })
+  .strict();
+
 module.exports = {
   csvRowSchema,
   participantQuerySchema,
   usernameParamSchema,
   exportQuerySchema,
+  createParticipantSchema,
+  updateParticipantSchema,
+  resetPasswordSchema,
+  checkUsernameQuerySchema,
 };

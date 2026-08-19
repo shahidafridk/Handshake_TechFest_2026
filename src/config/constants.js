@@ -19,8 +19,8 @@ module.exports = {
   // documented there, so don't tweak it without re-checking that math.
   HANDSHAKE_CODE_CHARSET: 'ABCDEFGHJKMNPQRSTUVWXYZ23456789',
 
-  LOGIN_RATE_LIMIT_WINDOW_MINUTES: 15,
-  LOGIN_RATE_LIMIT_MAX_ATTEMPTS: 5,
+  LOGIN_RATE_LIMIT_WINDOW_MINUTES: 5,
+  LOGIN_RATE_LIMIT_MAX_ATTEMPTS: 20,
 
   // Deliberately tight: codes are only 6-8 chars, so without a strict
   // per-user limit here, brute-forcing a currently-active code belonging to

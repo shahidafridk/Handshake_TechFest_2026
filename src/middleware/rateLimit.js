@@ -16,6 +16,8 @@ const loginRateLimit = rateLimit({
   max: LOGIN_RATE_LIMIT_MAX_ATTEMPTS,
   standardHeaders: true,
   legacyHeaders: false,
+  keyGenerator: (req) => `${req.ip}_${(req.body?.username || '').toLowerCase()}`,
+  validate: { keyGeneratorIpFallback: false },
   // Routes through the same centralized error shape as everything else,
   // rather than express-rate-limit's default plain-text response.
   handler: (req, res, next) => {

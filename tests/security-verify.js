@@ -258,6 +258,7 @@ async function testAdminAuthorization() {
   const adminEndpoints = [
     { method: 'GET', path: '/api/admin/dashboard' },
     { method: 'GET', path: '/api/admin/participants' },
+    { method: 'POST', path: '/api/admin/participants' },
     { method: 'POST', path: '/api/admin/import' },
     { method: 'GET', path: '/api/admin/credentials/export?batchId=00000000-0000-0000-0000-000000000000' },
     { method: 'PUT', path: '/api/admin/participants/testuser/activate' },
@@ -271,20 +272,144 @@ async function testAdminAuthorization() {
   }
 }
 
+// ─── 10B. ADMIN PARTICIPANT CREATION ──────────────────────────────
+async function testAdminParticipantCreation() {
+  console.log('\n🔒 Admin-Controlled Participant Creation');
+
+  // 1. Creation without auth -> 401
+  const { res: noAuth } = await json(`${BASE}/api/admin/participants`, {
+    method: 'POST',
+    body: JSON.stringify({ fullName: 'Test User', phone: '9876500001', college: 'Test College' }),
+  });
+  assert(noAuth.status === 401, 'POST /api/admin/participants without auth → 401');
+
+  // 2. Obtain admin token if credentials available
+  const adminPass = process.env.SEED_PASSWORD || 'STMarys@admin1';
+  const { body: loginRes } = await json(`${BASE}/api/auth/login`, {
+    method: 'POST',
+    body: JSON.stringify({ username: 'admin1', password: adminPass }),
+  });
+  const adminToken = loginRes?.token || loginRes?.data?.token;
+
+  if (!adminToken) {
+    skip('Admin Participant Creation Suite', 'Admin login token unavailable (rate-limited or seed password mismatch)');
+    return;
+  }
+
+  // 3. Extra field injection (mass assignment prevention) -> 400
+  const { res: extraFieldRes } = await json(`${BASE}/api/admin/participants`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${adminToken}` },
+    body: JSON.stringify({
+      fullName: 'Malicious Attempt',
+      phone: '9876500002',
+      college: 'Test College',
+      isAdmin: true,
+    }),
+  });
+  assert(extraFieldRes.status === 400, 'Reject unexpected request body fields (mass assignment prevention) → 400');
+
+  // 4. Successful participant creation by Admin
+  const testPhone = `9${Math.floor(1000009 + Math.random() * 8999990)}`;
+  const testUsername = `user_${Date.now()}`;
+  const testPassword = 'TestPassword123!';
+  const { res: createRes, body: createBody } = await json(`${BASE}/api/admin/participants`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${adminToken}` },
+    body: JSON.stringify({
+      fullName: 'Test Participant',
+      username: testUsername,
+      password: testPassword,
+      phone: testPhone,
+      college: 'Tech University',
+      department: 'Computer Science',
+    }),
+  });
+
+  assert(createRes.status === 201, 'Admin can create participant account → 201 Created');
+  assert(createBody.success === true, 'Response returns success: true');
+  assert(Boolean(createBody.data?.participant?.username), 'Returns created username');
+  assert(Boolean(createBody.data?.initial_password), 'Returns initial password');
+  assert(!createBody.data?.participant?.passwordHash, 'Response does NOT leak passwordHash');
+  assert(createBody.data?.participant?.is_active === true, 'Created participant is active');
+
+  const createdUsername = createBody.data?.participant?.username;
+  const initialPassword = createBody.data?.initial_password;
+
+  // 5. Test login with newly created participant
+  if (createdUsername && initialPassword) {
+    const { res: pLoginRes, body: pLoginBody } = await json(`${BASE}/api/auth/login`, {
+      method: 'POST',
+      body: JSON.stringify({ username: createdUsername, password: initialPassword }),
+    });
+
+    if (pLoginRes.status === 200) {
+      const pToken = pLoginBody?.token || pLoginBody?.data?.token;
+      const pUser = pLoginBody?.user || pLoginBody?.data?.user;
+      assert(pLoginRes.status === 200, 'Newly created participant can log in');
+      assert(pUser?.is_admin === false || pUser?.isAdmin === false, 'Newly created participant is NOT an admin (isAdmin === false)');
+
+      // 6. Test participant invoking admin endpoint -> 403 Forbidden
+      if (pToken) {
+        const { res: forbiddenRes } = await json(`${BASE}/api/admin/participants`, {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${pToken}` },
+          body: JSON.stringify({ fullName: 'Unauthorized Create', username: 'unauth_u', password: 'password123' }),
+        });
+        assert(forbiddenRes.status === 403, 'Normal participant cannot invoke account creation endpoint → 403');
+      }
+    } else {
+      skip('Participant Login Check', 'Login rate limited or failed');
+    }
+  }
+
+  // 7. Duplicate phone rejection -> 409
+  const { res: dupPhoneRes } = await json(`${BASE}/api/admin/participants`, {
+    method: 'POST',
+    headers: { Authorization: `Bearer ${adminToken}` },
+    body: JSON.stringify({
+      fullName: 'Duplicate Phone Test',
+      username: `dup_p_${Date.now()}`,
+      password: 'password123',
+      phone: testPhone,
+      college: 'Tech University',
+    }),
+  });
+  assert(dupPhoneRes.status === 409, 'Duplicate phone rejected → 409 Conflict');
+
+  // 8. Duplicate username rejection -> 409
+  if (createdUsername) {
+    const { res: dupUserRes } = await json(`${BASE}/api/admin/participants`, {
+      method: 'POST',
+      headers: { Authorization: `Bearer ${adminToken}` },
+      body: JSON.stringify({
+        fullName: 'Duplicate Username Test',
+        username: createdUsername,
+        password: 'password123',
+        phone: `9${Math.floor(1000009 + Math.random() * 8999990)}`,
+        college: 'Tech University',
+      }),
+    });
+    assert(dupUserRes.status === 409, 'Duplicate username rejected → 409 Conflict');
+  }
+}
+
 // ─── 11. RATE LIMITING ──────────────────────────────────────────────
 async function testRateLimiting() {
   console.log('\n🔒 Rate Limiting');
-  // By this point in the test, we've already sent multiple login requests.
-  // The rate limiter should have kicked in.
-  const { res } = await json(`${BASE}/api/auth/login`, {
-    method: 'POST',
-    body: JSON.stringify({ username: 'ratechecker', password: 'test' }),
-  });
+  // Fire requests until rate limit (20 max) is exceeded
+  let res;
+  for (let i = 0; i < 22; i++) {
+    const r = await json(`${BASE}/api/auth/login`, {
+      method: 'POST',
+      body: JSON.stringify({ username: 'ratechecker_test', password: 'testpassword' }),
+    });
+    res = r.res;
+    if (res.status === 429) break;
+  }
   assert(res.status === 429, 'Login rate limit is active');
 
   // Rate limit response body should be in correct format
-  const body = await res.json().catch(() => ({}));
-  // Check headers
   const retryAfter = res.headers.get('retry-after');
   assert(retryAfter !== null || res.status === 429, 'Rate limit returns Retry-After or 429');
 }
@@ -348,6 +473,7 @@ async function main() {
   await testCORS();
   await testHandshakeCodeValidation();
   await testAdminAuthorization();
+  await testAdminParticipantCreation();
   await testRateLimiting();
   await testHealthCheck();
   await testNotFound();

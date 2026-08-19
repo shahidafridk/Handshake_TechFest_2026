@@ -19,7 +19,7 @@ model User {
   college         String
   department      String?
   year            Int?
-  email           String    @unique
+  phone           String?   @unique
   profilePhotoUrl String?
 
   // Leaderboard score. Equal to the number of verified handshakes this user
