@@ -1308,7 +1308,7 @@ body.admin-body {
 /* ─── MULTI-VIEWPORT RESPONSIVE BREAKPOINTS ──────────────── */
 @media (max-width: 1200px) {
   .admin-workspace {
-    padding: 24px;
+    padding: 20px;
   }
 
   .metrics-grid {
@@ -1322,7 +1322,7 @@ body.admin-body {
 
 @media (max-width: 900px) {
   .admin-header {
-    padding: 0 16px;
+    padding: 0 14px;
   }
 
   .admin-mobile-toggle {
@@ -1339,6 +1339,7 @@ body.admin-body {
     transform: translateX(-100%);
     transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: var(--admin-shadow-modal);
+    width: 260px;
   }
 
   .admin-sidebar.open {
@@ -1348,7 +1349,7 @@ body.admin-body {
   .admin-workspace {
     margin-left: 0;
     width: 100%;
-    padding: 20px 16px;
+    padding: 16px 12px;
   }
 
   .overview-widgets {
@@ -1358,6 +1359,8 @@ body.admin-body {
   .filter-toolbar {
     flex-direction: column;
     align-items: stretch;
+    padding: 14px;
+    gap: 12px;
   }
 
   .input-with-button {
@@ -1372,16 +1375,40 @@ body.admin-body {
     flex-direction: column;
     gap: 12px;
     align-items: center;
+    text-align: center;
+  }
+
+  .action-buttons-group {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .action-buttons-group .btn {
+    width: 100%;
   }
 }
 
 @media (max-width: 600px) {
+  .input-control, .select-control, input, select, textarea {
+    font-size: 16px !important;
+  }
+
   .metrics-grid {
     grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .metric-card {
+    padding: 14px;
+  }
+
+  .metric-value {
+    font-size: 24px;
   }
 
   .form-grid {
     grid-template-columns: 1fr;
+    gap: 12px;
   }
 
   .form-grid-full {
@@ -1394,6 +1421,65 @@ body.admin-body {
 
   .form-actions .btn {
     width: 100%;
+    height: 44px;
+  }
+
+  .admin-table th, .admin-table td {
+    padding: 8px 10px;
+    font-size: 12.5px;
+  }
+
+  .table-container {
+    border-radius: var(--admin-radius-md);
+  }
+
+  .modal-overlay {
+    padding: 12px;
+  }
+
+  .admin-modal-card {
+    max-width: 100%;
+    max-height: 92vh;
+    overflow-y: auto;
+    border-radius: var(--admin-radius-md);
+  }
+
+  .modal-header {
+    padding: 14px 16px;
+  }
+
+  .modal-body {
+    padding: 16px;
+  }
+
+  .modal-footer {
+    padding: 12px 16px;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .modal-footer .btn {
+    width: 100%;
+  }
+
+  .admin-header-right {
+    gap: 8px;
+  }
+
+  .admin-handle {
+    font-size: 11px;
+    max-width: 80px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .btn-header-logout span {
+    display: none;
+  }
+
+  .btn-header-logout {
+    padding: 6px;
   }
 }
 

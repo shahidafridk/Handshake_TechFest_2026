@@ -86,7 +86,6 @@ async function runTests() {
       fullName: 'Console Participant',
       username: newUsername,
       password: newPassword,
-      email: `${newUsername}@fest.local`,
       college: 'Tech College',
       department: 'Robotics',
     }

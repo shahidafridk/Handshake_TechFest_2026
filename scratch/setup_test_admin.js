@@ -10,8 +10,7 @@ async function main() {
     create: {
       username: 'testadmin',
       fullName: 'Test Admin',
-      email: 'testadmin@fest.local',
-      college: 'TechFest HQ',
+      college: 'St. Marys Organizing Committee',
       passwordHash,
       isAdmin: true,
       isActive: true,
