@@ -467,20 +467,20 @@ a { color: inherit; text-decoration: none; }
 
 .stat-label {
   font-family: var(--font-display);
-  font-size: clamp(16px, 4vw, 22px);
+  font-size: clamp(18px, 2.5vw, 32px);
   font-weight: 800;
   color: #FFFFFF !important;
-  letter-spacing: 1.5px;
-  text-shadow: 0 0 10px rgba(255, 102, 0, 0.5);
+  letter-spacing: 2px;
+  text-shadow: 0 0 12px rgba(255, 102, 0, 0.6);
   text-transform: uppercase;
 }
 
 .stat-number {
   font-family: var(--font-mono);
-  font-size: clamp(28px, 7vw, 44px);
+  font-size: clamp(32px, 4.5vw, 60px);
   font-weight: 800;
   color: var(--orange-light) !important;
-  text-shadow: 0 0 12px rgba(255, 102, 0, 0.8);
+  text-shadow: 0 0 14px rgba(255, 102, 0, 0.85);
   line-height: 1;
 }
 
@@ -867,11 +867,15 @@ a { color: inherit; text-decoration: none; }
     gap: 24px;
     align-items: start;
   }
+  .stat-label { font-size: 26px !important; letter-spacing: 2px !important; }
+  .stat-number { font-size: 48px !important; }
 }
 
 @media (min-width: 1024px) {
   .app-main { padding: 32px 24px; }
   .dashboard-grid { grid-template-columns: 1fr 420px; }
+  .stat-label { font-size: 30px !important; letter-spacing: 2.5px !important; }
+  .stat-number { font-size: 56px !important; }
 }
 
 /* --- Admin & Contact Admin Styles --- */
