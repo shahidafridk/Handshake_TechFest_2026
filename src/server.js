@@ -7,9 +7,11 @@ const env = require('./config/env');
 const app = require('./app');
 const logger = require('./utils/logger');
 const prisma = require('./db/client');
+const bootstrapAdmins = require('./utils/bootstrapAdmins');
 
-const server = app.listen(env.PORT, () => {
+const server = app.listen(env.PORT, async () => {
   logger.info(`Handshake.sh API listening on port ${env.PORT} (${env.NODE_ENV})`);
+  await bootstrapAdmins();
 });
 
 // Railway/Render send SIGTERM before stopping/replacing a container on every
