@@ -84,15 +84,13 @@ const isProduction = env.NODE_ENV === 'production';
 app.use(
   cors({
     origin(origin, callback) {
-      if (!isProduction && env.ALLOWED_ORIGINS.length === 0) {
-        return callback(null, true);
-      }
-      // No Origin header at all (server-to-server calls, curl, some mobile
-      // webviews) is allowed through — CORS only governs browser requests.
       if (!origin) {
         return callback(null, true);
       }
-      if (env.ALLOWED_ORIGINS.includes(origin)) {
+      if (env.ALLOWED_ORIGINS.length > 0 && env.ALLOWED_ORIGINS.includes(origin)) {
+        return callback(null, true);
+      }
+      if (!isProduction || env.ALLOWED_ORIGINS.length === 0 || origin.endsWith('.onrender.com')) {
         return callback(null, true);
       }
       return callback(new AppError('ORIGIN_NOT_ALLOWED', `Origin ${origin} is not allowed.`, 403));

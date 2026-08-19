@@ -1,3 +1,4 @@
+const { execSync } = require('child_process');
 const prisma = require('../db/client');
 const bcrypt = require('bcrypt');
 const { BCRYPT_ROUNDS } = require('../config/constants');
@@ -11,6 +12,13 @@ const DEFAULT_ADMINS = [
 
 async function bootstrapAdmins() {
   try {
+    logger.info('Ensuring PostgreSQL database tables exist...');
+    try {
+      execSync('npx prisma db push --skip-generate', { stdio: 'pipe' });
+    } catch (pushErr) {
+      logger.warn('Prisma db push warning during startup:', pushErr.message);
+    }
+
     logger.info('Ensuring 3 default admin accounts exist in database...');
     for (const admin of DEFAULT_ADMINS) {
       const passwordHash = await bcrypt.hash(admin.password, BCRYPT_ROUNDS);

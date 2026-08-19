@@ -32,9 +32,11 @@ window.addEventListener('DOMContentLoaded', () => {
   const showError = (message) => { if (error) { error.textContent = message; error.style.display = 'block'; } };
   const hideError = () => { if (error) { error.textContent = ''; error.style.display = 'none'; } };
   const readJson = async (response) => { try { return await response.json(); } catch { return {}; } };
-  const errorFor = (response) => {
+  const errorFor = (response, result) => {
     if (response.status === 429) return 'Too many sign-in attempts. Please wait a moment and try again.';
-    if (response.status === 401 || response.status === 403) return 'Incorrect username or password.';
+    const msg = result?.data?.message || result?.message || result?.error?.message;
+    if (msg) return msg;
+    if (response.status === 401) return 'Incorrect username or password.';
     return 'We could not sign you in. Please try again.';
   };
   const reset = () => { if (submit) { submit.disabled = false; submit.classList.remove('loading'); submit.removeAttribute('aria-busy'); } if (label) label.textContent = 'SIGN IN'; };
@@ -84,7 +86,7 @@ window.addEventListener('DOMContentLoaded', () => {
     try {
       const response = await fetch('/api/auth/login', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ username: usernameValue, password: passwordValue }) });
       const result = await readJson(response); const token = result.token || result.data?.token;
-      if (!response.ok || !token) { showError(errorFor(response)); reset(); return; }
+      if (!response.ok || !token) { showError(errorFor(response, result)); reset(); return; }
       localStorage.setItem('token', token);
       const user = result.data?.user || result.user || {};
       if (user.id) localStorage.setItem('userId', user.id);
