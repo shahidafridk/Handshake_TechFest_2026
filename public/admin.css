@@ -1360,10 +1360,15 @@ body.admin-body {
     transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     box-shadow: var(--admin-shadow-modal);
     width: 260px;
+    z-index: 1200;
   }
 
   .admin-sidebar.open {
     transform: translateX(0);
+  }
+
+  body.sidebar-open .admin-mobile-bottom-nav {
+    display: none !important;
   }
 
   .admin-workspace {

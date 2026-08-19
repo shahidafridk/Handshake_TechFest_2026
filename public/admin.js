@@ -86,9 +86,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const isOpen = open !== undefined ? open : !adminSidebar?.classList.contains('open');
     if (isOpen) {
       adminSidebar?.classList.add('open');
+      document.body.classList.add('sidebar-open');
       if (sidebarBackdrop) sidebarBackdrop.hidden = false;
     } else {
       adminSidebar?.classList.remove('open');
+      document.body.classList.remove('sidebar-open');
       if (sidebarBackdrop) sidebarBackdrop.hidden = true;
     }
   }
