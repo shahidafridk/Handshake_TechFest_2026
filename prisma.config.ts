@@ -6,6 +6,6 @@ export default defineConfig({
   datasource: {
     // Prefers DIRECT_URL (Port 5432) for migrations & schema syncing;
     // falls back to DATABASE_URL if DIRECT_URL isn't explicitly set.
-    url: env('DIRECT_URL') || env('DATABASE_URL'),
+    url: env('DATABASE_URL'),
   },
 });
