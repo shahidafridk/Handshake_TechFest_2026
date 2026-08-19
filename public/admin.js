@@ -96,36 +96,42 @@ document.addEventListener('DOMContentLoaded', () => {
   mobileMenuBtn?.addEventListener('click', () => toggleSidebar());
   sidebarBackdrop?.addEventListener('click', () => toggleSidebar(false));
 
-  const navBtns = $$('.admin-nav-btn');
+  const navBtns = $$('.admin-nav-btn, .mobile-nav-item');
   const tabPanels = $$('.admin-tab-content');
+
+  function switchTab(targetTab) {
+    navBtns.forEach((b) => {
+      if (b.dataset.tab === targetTab) {
+        b.classList.add('active');
+        b.setAttribute('aria-selected', 'true');
+      } else {
+        b.classList.remove('active');
+        b.setAttribute('aria-selected', 'false');
+      }
+    });
+
+    tabPanels.forEach((p) => {
+      p.classList.remove('active');
+      p.hidden = true;
+    });
+
+    const targetPanel = $(`sec-${targetTab}`);
+    if (targetPanel) {
+      targetPanel.classList.add('active');
+      targetPanel.hidden = false;
+    }
+
+    toggleSidebar(false);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    if (targetTab === 'overview') loadOverview();
+    else if (targetTab === 'participants') loadParticipants();
+    else if (targetTab === 'audit') loadAuditLogs();
+  }
 
   navBtns.forEach((btn) => {
     btn.addEventListener('click', () => {
-      const targetTab = btn.dataset.tab;
-
-      navBtns.forEach((b) => {
-        b.classList.remove('active');
-        b.setAttribute('aria-selected', 'false');
-      });
-      tabPanels.forEach((p) => {
-        p.classList.remove('active');
-        p.hidden = true;
-      });
-
-      btn.classList.add('active');
-      btn.setAttribute('aria-selected', 'true');
-
-      const targetPanel = $(`sec-${targetTab}`);
-      if (targetPanel) {
-        targetPanel.classList.add('active');
-        targetPanel.hidden = false;
-      }
-
-      toggleSidebar(false);
-
-      if (targetTab === 'overview') loadOverview();
-      else if (targetTab === 'participants') loadParticipants();
-      else if (targetTab === 'audit') loadAuditLogs();
+      if (btn.dataset.tab) switchTab(btn.dataset.tab);
     });
   });
 

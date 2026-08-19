@@ -1511,3 +1511,65 @@ body.admin-body {
   color: var(--admin-text-secondary);
 }
 
+/* ─── MOBILE BOTTOM NAVIGATION DOCK (Smartphones Only) ───── */
+.admin-mobile-bottom-nav {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .admin-mobile-bottom-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 60px;
+    background-color: var(--admin-bg-surface);
+    border-top: 2px solid var(--admin-orange);
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+    z-index: 1000;
+    padding: 0 4px;
+  }
+
+  .mobile-nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    flex: 1;
+    height: 100%;
+    background: transparent;
+    border: none;
+    color: var(--admin-text-muted);
+    font-family: var(--admin-font-sans);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.3px;
+    cursor: pointer;
+    transition: var(--admin-transition);
+  }
+
+  .mobile-nav-icon {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
+    stroke-width: 2;
+    fill: none;
+  }
+
+  .mobile-nav-item.active {
+    color: var(--admin-orange);
+  }
+
+  .mobile-nav-item.active .mobile-nav-icon {
+    stroke: var(--admin-orange);
+  }
+
+  .admin-workspace {
+    padding-bottom: 84px !important;
+  }
+}
+
