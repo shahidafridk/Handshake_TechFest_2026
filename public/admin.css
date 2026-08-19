@@ -1395,6 +1395,56 @@ body.admin-body {
     font-size: 16px !important;
   }
 
+  .metrics-summary-single {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 16px;
+  }
+
+  .metric-card-single {
+    max-width: 100%;
+    width: 100%;
+    padding: 12px;
+    border-radius: var(--admin-radius-md);
+  }
+
+  .metric-card-single .metric-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+  }
+
+  .metric-card-single .metric-title {
+    font-size: 9.5px;
+    letter-spacing: 0.2px;
+  }
+
+  .metric-card-single .metric-icon-box {
+    width: 26px;
+    height: 26px;
+    flex-shrink: 0;
+  }
+
+  .metric-card-single .metric-icon-box .admin-icon {
+    width: 14px;
+    height: 14px;
+  }
+
+  .metric-card-single .metric-value {
+    font-size: 20px;
+    margin-top: 4px;
+    margin-bottom: 2px;
+  }
+
+  .metric-card-single .metric-subtext {
+    font-size: 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
   .metrics-grid {
     grid-template-columns: 1fr;
     gap: 12px;
@@ -1402,10 +1452,6 @@ body.admin-body {
 
   .metric-card {
     padding: 14px;
-  }
-
-  .metric-value {
-    font-size: 24px;
   }
 
   .form-grid {
