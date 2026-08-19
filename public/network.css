@@ -455,31 +455,32 @@ a { color: inherit; text-decoration: none; }
 .crt-stat-box {
   background: var(--crt-bg);
   border: 2px solid var(--crt-border);
-  border-radius: 8px;
-  padding: 10px 14px;
+  border-radius: 10px;
+  padding: 14px 20px;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  box-shadow: inset 0 2px 6px rgba(0,0,0,0.5), 0 1px 0 #FFFFFF;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.5), 0 1px 0 #FFFFFF;
   width: 100%;
 }
 
 .stat-label {
   font-family: var(--font-display);
-  font-size: 13px;
+  font-size: clamp(16px, 4vw, 22px);
   font-weight: 800;
   color: #FFFFFF !important;
-  letter-spacing: 1px;
-  text-shadow: 0 0 6px rgba(255, 85, 0, 0.5);
+  letter-spacing: 1.5px;
+  text-shadow: 0 0 10px rgba(255, 102, 0, 0.5);
+  text-transform: uppercase;
 }
 
 .stat-number {
   font-family: var(--font-mono);
-  font-size: clamp(24px, 7vw, 32px);
+  font-size: clamp(28px, 7vw, 44px);
   font-weight: 800;
   color: var(--orange-light) !important;
-  text-shadow: 0 0 8px rgba(255, 102, 0, 0.7);
+  text-shadow: 0 0 12px rgba(255, 102, 0, 0.8);
   line-height: 1;
 }
 
@@ -854,7 +855,6 @@ a { color: inherit; text-decoration: none; }
   .identity-panel { padding: 18px; }
   .card-body { padding: 18px; gap: 18px; }
   .chassis-card-header { padding: 18px 18px 0 18px; }
-  .crt-stat-box { flex-direction: column; align-items: flex-end; width: auto; padding: 10px 18px; }
   .modal-footer .btn { width: auto; min-width: 140px; }
 }
 

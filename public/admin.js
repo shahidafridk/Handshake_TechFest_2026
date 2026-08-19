@@ -73,6 +73,9 @@ document.addEventListener('DOMContentLoaded', () => {
     if ($('adminUserHandle')) {
       $('adminUserHandle').textContent = `@${user.username}`;
     }
+    if ($('sidebarUserHandle')) {
+      $('sidebarUserHandle').textContent = `@${user.username}`;
+    }
 
     loadOverview();
   }
@@ -910,11 +913,14 @@ document.addEventListener('DOMContentLoaded', () => {
   $('refreshAuditBtn')?.addEventListener('click', () => loadAuditLogs());
 
   // Logout handler
-  $('adminLogoutBtn')?.addEventListener('click', () => {
+  const handleLogout = () => {
     localStorage.removeItem('token');
     sessionStorage.removeItem('token');
     window.location.replace('login.html');
-  });
+  };
+
+  $('adminLogoutBtn')?.addEventListener('click', handleLogout);
+  $('sidebarLogoutBtn')?.addEventListener('click', handleLogout);
 
   // ─── UTILITY HELPERS ──────────────────────────────────────
   function showFormStatus(el, msg, isSuccess) {
