@@ -894,6 +894,15 @@ document.addEventListener('DOMContentLoaded', () => {
       .replace(/'/g, '&#039;');
   }
 
+  // Logout handler
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    sessionStorage.removeItem('token');
+    window.location.replace('login.html');
+  };
+
+  $('sidebarLogoutBtn')?.addEventListener('click', handleLogout);
+
   // Initialize Auth Guard
   initAuth();
 });

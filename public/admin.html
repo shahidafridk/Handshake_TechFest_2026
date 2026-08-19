@@ -31,20 +31,10 @@
     </div>
 
     <div class="admin-header-right">
-      <div class="admin-status-indicator-top">
-        <span class="status-pulse"></span>
-        <span>SYSTEM ONLINE</span>
-      </div>
-
       <div class="admin-user-info">
         <div class="admin-avatar">A</div>
         <div id="adminUserHandle" class="admin-handle">@admin</div>
       </div>
-
-      <button id="adminLogoutBtn" class="btn-header-logout" type="button">
-        <svg class="admin-icon admin-icon-sm" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
-        <span>Log Out</span>
-      </button>
     </div>
   </header>
 
@@ -60,13 +50,13 @@
           <ul class="admin-nav-list" role="tablist">
             <li>
               <button class="admin-nav-btn active" data-tab="overview" role="tab" aria-selected="true">
-                <svg class="admin-icon" viewBox="0 0 24 24"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+                <svg class="admin-icon" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
                 <span>Overview</span>
               </button>
             </li>
             <li>
               <button class="admin-nav-btn" data-tab="participants" role="tab" aria-selected="false">
-                <svg class="admin-icon" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                <svg class="admin-icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
                 <span>Participants</span>
               </button>
             </li>
@@ -114,10 +104,10 @@
       </div>
 
       <div class="admin-sidebar-footer">
-        <div class="sidebar-user-badge">
-          <div class="admin-avatar">A</div>
-          <span id="sidebarUserHandle" class="admin-handle">@admin</span>
-        </div>
+        <button id="sidebarLogoutBtn" class="btn btn-danger btn-block sidebar-logout-btn" type="button">
+          <svg class="admin-icon admin-icon-sm" viewBox="0 0 24 24"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+          <span>LOG OUT</span>
+        </button>
         <div class="admin-version-info">TechFest 2026 v1.0 · Secured</div>
       </div>
     </aside>
