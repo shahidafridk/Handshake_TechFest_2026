@@ -10,10 +10,7 @@ const authenticate = async (req, res, next) => {
     }
 
     const token = authHeader.split(' ')[1];
-
-// Add the fallback so it checks your .env file!
-const secret = process.env.JWT_SECRET || JWT_SECRET || 'your_jwt_secret';
-const payload = jwt.verify(token, secret);    
+    const payload = jwt.verify(token, JWT_SECRET, { algorithms: ['HS256'] });
     const userId = payload.sub || payload.id;
 
     // Fetch full user object from Prisma

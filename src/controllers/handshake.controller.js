@@ -28,11 +28,24 @@ const verify = asyncHandler(async function verify(req, res) {
     req.ip
   );
 
-  sendSuccess(res, 201, 'Handshake verified.', {
+  sendSuccess(res, 200, 'Handshake connected successfully!', {
+    // Retains the fields consumed by the existing frontend.
+    id: initiator.id,
+    full_name: initiator.fullName,
+    username: initiator.username,
+    // Additional authoritative result data is backward-compatible.
     handshake_id: handshake.id,
     connected_with: { full_name: initiator.fullName, college: initiator.college },
     new_handshake_count: responder.handshakeCount,
   });
+});
+
+const list = asyncHandler(async function list(req, res) {
+  const recent = await handshakeService.getRecentForHandshakeList(req.user.id);
+
+  // Preserve the current dashboard contract. Direct handshaking has no
+  // pending/accept/reject workflow, so this array remains intentionally empty.
+  res.status(200).json({ success: true, data: { pending: [], recent } });
 });
 
 const myCode = asyncHandler(async function myCode(req, res) {
@@ -50,4 +63,4 @@ const history = asyncHandler(async function history(req, res) {
   sendSuccess(res, 200, 'Handshake history retrieved.', { handshakes });
 });
 
-module.exports = { generate, verify, myCode, history };
+module.exports = { generate, verify, list, myCode, history };

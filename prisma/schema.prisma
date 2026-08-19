@@ -59,7 +59,7 @@ model User {
 
 model HandshakeCode {
   id        String    @id @default(uuid())
-  code      String    // 6-8 chars (length configurable via env), uppercase,
+  code      String    @unique // 6-8 chars (length configurable via env), uppercase,
                        // filtered charset — enforced in application code
                        // (codeGenerator.js), not the DB, since Prisma has no
                        // native regex/CHECK constraint support.

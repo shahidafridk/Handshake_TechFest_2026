@@ -8,9 +8,6 @@ const { Prisma } = require('@prisma/client');
 const multer = require('multer');
 const AppError = require('../utils/AppError');
 const logger = require('../utils/logger');
-const env = require('../config/env');
-
-const isProduction = env.NODE_ENV === 'production';
 
 function errorHandler(err, req, res, next) { // eslint-disable-line no-unused-vars
   // 1. Known, expected errors — safe to describe precisely.
@@ -49,7 +46,26 @@ function errorHandler(err, req, res, next) { // eslint-disable-line no-unused-va
     });
   }
 
-  // 3. Known Prisma errors — translate the common ones to something
+  // 3. Body-parser errors — oversized payloads and malformed JSON that Express
+  // rejects before the request even reaches route-level code.
+  if (err.type === 'entity.too.large') {
+    logger.warn({ path: req.path }, 'Request payload too large');
+    return res.status(413).json({
+      success: false,
+      message: 'Request payload is too large.',
+      error: { code: 'PAYLOAD_TOO_LARGE' },
+    });
+  }
+  if (err.type === 'entity.parse.failed') {
+    logger.warn({ path: req.path }, 'Malformed request body');
+    return res.status(400).json({
+      success: false,
+      message: 'The request body could not be parsed.',
+      error: { code: 'INVALID_BODY' },
+    });
+  }
+
+  // 4. Known Prisma errors — translate the common ones to something
   // meaningful instead of leaking a raw database error to the client.
   if (err instanceof Prisma.PrismaClientKnownRequestError) {
     logger.warn({ prismaCode: err.code, path: req.path }, 'Prisma known request error');
@@ -83,7 +99,6 @@ function errorHandler(err, req, res, next) { // eslint-disable-line no-unused-va
     message: 'Something went wrong. Please try again.',
     error: {
       code: 'INTERNAL_ERROR',
-      ...(isProduction ? {} : { stack: err.stack }),
     },
   });
 }

@@ -20,7 +20,14 @@ const logger = pino({
     // passed to the logger in the first place, redact known-sensitive key
     // names so a future `logger.info(req.body)` mistake doesn't leak a
     // password or JWT into log storage.
-    paths: ['password', 'passwordHash', 'token', '*.password', '*.passwordHash', '*.token'],
+    paths: [
+      'password', 'passwordHash', 'token',
+      '*.password', '*.passwordHash', '*.token',
+      'authorization', '*.authorization',
+      'cookie', '*.cookie',
+      'jwt_secret', '*.jwt_secret',
+      'req.headers.authorization', 'req.headers.cookie',
+    ],
     censor: '[REDACTED]',
   },
 });

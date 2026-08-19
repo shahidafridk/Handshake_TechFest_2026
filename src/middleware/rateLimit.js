@@ -1,8 +1,6 @@
-// express-rate-limit instance scoped to login. Deliberately not a generic
-// "apply to everything" limiter — different endpoints will need different
-// limits later (verify-code needs a much tighter per-user limit in Module
-// 3), so each gets its own configured instance rather than one shared
-// global limiter with a one-size-fits-none threshold.
+// express-rate-limit instances scoped per endpoint. Deliberately not a
+// generic "apply to everything" limiter — different endpoints need different
+// limits, so each gets its own configured instance.
 
 const rateLimit = require('express-rate-limit');
 const AppError = require('../utils/AppError');
@@ -53,4 +51,25 @@ const verifyCodeRateLimit = rateLimit({
   },
 });
 
-module.exports = { loginRateLimit, verifyCodeRateLimit };
+// Prevents code-generation DoS — without this, an attacker with a valid
+// token can hammer generate-code endlessly, creating database churn and
+// burning server resources. 20 per minute per user is generous for
+// legitimate use (you only need one code at a time).
+const generateCodeRateLimit = rateLimit({
+  windowMs: 60 * 1000,
+  max: 20,
+  standardHeaders: true,
+  legacyHeaders: false,
+  keyGenerator: (req) => req.user.id,
+  handler: (req, res, next) => {
+    next(
+      new AppError(
+        'TOO_MANY_ATTEMPTS',
+        'Too many code generation requests. Please wait a moment.',
+        429
+      )
+    );
+  },
+});
+
+module.exports = { loginRateLimit, verifyCodeRateLimit, generateCodeRateLimit };

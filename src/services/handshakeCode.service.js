@@ -6,13 +6,13 @@
 const prisma = require('../db/client');
 const AppError = require('../utils/AppError');
 const { generateRandomCode } = require('../utils/codeGenerator');
-const { HANDSHAKE_CODE_EXPIRY_MINUTES } = require('../config/constants');
+const { HANDSHAKE_CODE_EXPIRY_SECONDS } = require('../config/constants');
 const auditLog = require('./auditLog.service');
 
 const MAX_GENERATION_ATTEMPTS = 5;
 
 function computeExpiry(from = new Date()) {
-  return new Date(from.getTime() + HANDSHAKE_CODE_EXPIRY_MINUTES * 60 * 1000);
+  return new Date(from.getTime() + HANDSHAKE_CODE_EXPIRY_SECONDS * 1000);
 }
 
 /**
@@ -44,10 +44,7 @@ async function createUniqueActiveCode(tx, ownerId, ipAddress) {
 
     try {
       const created = await tx.handshakeCode.create({ data: { ownerId, code, expiresAt } });
-      await auditLog.logEvent(
-        { event: auditLog.EVENTS.CODE_GENERATED, userId: ownerId, handshakeCode: code, ipAddress },
-        tx
-      );
+      await auditLog.logEvent({ event: auditLog.EVENTS.CODE_GENERATED, userId: ownerId, ipAddress }, tx);
       return created;
     } catch (err) {
       if (err.code === 'P2002') {
@@ -59,6 +56,8 @@ async function createUniqueActiveCode(tx, ownerId, ipAddress) {
           orderBy: { createdAt: 'desc' },
         });
         if (winningCode) return winningCode;
+        // A unique-code collision belongs to another owner; generate again.
+        continue;
       }
       throw err;
     }
@@ -80,6 +79,13 @@ async function createUniqueActiveCode(tx, ownerId, ipAddress) {
 async function getOrCreateActiveCode(userId, ipAddress) {
   return prisma.$transaction(async (tx) => {
     const now = new Date();
+
+    // The active-code index is keyed on usedAt. Marking expired, unused rows
+    // unavailable here releases that index slot before a replacement is made.
+    await tx.handshakeCode.updateMany({
+      where: { ownerId: userId, usedAt: null, expiresAt: { lte: now } },
+      data: { usedAt: now },
+    });
 
     const existing = await tx.handshakeCode.findFirst({
       where: { ownerId: userId, usedAt: null, expiresAt: { gt: now } },

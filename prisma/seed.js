@@ -4,15 +4,16 @@
 // re-running this during local development never crashes on a duplicate
 // key. Safe to run repeatedly against the same database.
 //
-// Password hashing uses the same bcrypt cost factor (12) planned for
-// production auth, not a cheaper dev-only value — the seed script should
-// exercise the real hashing path, not a shortcut version of it.
+// Development seeds use the configured bcrypt cost and an explicit password;
+// remote development databases require a separate, deliberate opt-in.
 const bcrypt = require('bcrypt');
 const { sortPair } = require('../src/utils/sortPair');
 const prisma = require('../src/db/client');
+const env = require('../src/config/env');
+const { BCRYPT_ROUNDS } = require('../src/config/constants');
 
-const BCRYPT_ROUNDS = 12;
-const SEED_PASSWORD = 'TechFest2026!'; // same for every seeded user, for local testing only
+const SEED_PASSWORD = process.env.SEED_PASSWORD;
+const SEED_ALLOW_REMOTE = process.env.SEED_ALLOW_REMOTE === 'true';
 
 const PARTICIPANTS = [
   { username: 'yadu24', fullName: 'Yadu Krishnan', college: 'IIT Bombay', department: 'Computer Science', year: 3, email: 'yadu24@example.edu' },
@@ -40,6 +41,34 @@ async function upsertUser(data, overrides = {}) {
 }
 
 async function main() {
+  if (env.NODE_ENV !== 'development') {
+    throw new Error('Seeding is permitted only when NODE_ENV=development.');
+  }
+
+  if (!SEED_PASSWORD) {
+    throw new Error('Seeding requires an explicit SEED_PASSWORD.');
+  }
+
+  let databaseHost;
+  try {
+    databaseHost = new URL(process.env.DATABASE_URL).hostname;
+  } catch {
+    throw new Error('Seeding requires a valid database connection URL.');
+  }
+
+  const localHosts = new Set(['localhost', '127.0.0.1', '::1']);
+  const isLocalDatabase = localHosts.has(databaseHost);
+
+  if (!isLocalDatabase && !SEED_ALLOW_REMOTE) {
+    throw new Error(
+      'Remote development seeding requires explicit SEED_ALLOW_REMOTE=true.'
+    );
+  }
+
+  if (!isLocalDatabase) {
+    console.log('Remote development seeding explicitly enabled.');
+  }
+
   console.log('Seeding admin user...');
   const admin = await upsertUser(
     { username: 'admin', fullName: 'Event Admin', college: 'Organizing Committee', email: 'admin@handshake.sh' },
@@ -151,7 +180,6 @@ async function main() {
   console.log(`  ${PARTICIPANTS.length + 1} users (including 1 admin)`);
   console.log(`  ${verifiedPairs.length} verified handshakes`);
   console.log('  1 active code, 1 expired-unused code, 3 used codes');
-  console.log(`  Shared seed password for all users: ${SEED_PASSWORD}`);
 }
 
 main()

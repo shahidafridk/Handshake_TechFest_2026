@@ -53,6 +53,7 @@ async function verifyCode(submittedCode, requesterId, ipAddress) {
 
       const codeRow = await tx.handshakeCode.findFirst({
         where: { code: submittedCode, usedAt: null },
+        include: { owner: { select: { id: true, isActive: true } } },
       });
 
       if (!codeRow) {
@@ -60,6 +61,9 @@ async function verifyCode(submittedCode, requesterId, ipAddress) {
       }
       if (codeRow.expiresAt <= now) {
         throw new AppError('CODE_EXPIRED', 'This code expired before it could be verified.', 410);
+      }
+      if (!codeRow.owner.isActive) {
+        throw new AppError('CODE_NOT_FOUND', 'Invalid handshake code.', 404);
       }
       if (codeRow.ownerId === requesterId) {
         throw new AppError('SELF_HANDSHAKE', 'You cannot verify your own handshake code.', 400);
@@ -118,7 +122,6 @@ async function verifyCode(submittedCode, requesterId, ipAddress) {
           event: auditLog.EVENTS.CODE_VERIFIED,
           userId: requesterId,
           targetUserId: codeRow.ownerId,
-          handshakeCode: submittedCode,
           ipAddress,
         },
         tx
@@ -136,7 +139,6 @@ async function verifyCode(submittedCode, requesterId, ipAddress) {
         await auditLog.logEvent({
           event,
           userId: requesterId,
-          handshakeCode: submittedCode,
           ipAddress,
         });
       }
@@ -171,4 +173,26 @@ async function getHistory(userId, limit) {
   });
 }
 
-module.exports = { verifyCode, getHistory };
+async function getRecentForHandshakeList(userId) {
+  const rows = await prisma.handshake.findMany({
+    where: { OR: [{ initiatorId: userId }, { responderId: userId }] },
+    include: {
+      initiator: { select: { id: true, fullName: true, username: true, department: true } },
+      responder: { select: { id: true, fullName: true, username: true, department: true } },
+    },
+    orderBy: { createdAt: 'desc' },
+  });
+
+  return rows.map((row) => {
+    const other = row.initiator.id === userId ? row.responder : row.initiator;
+    return {
+      id: row.id,
+      full_name: other.fullName,
+      username: other.username,
+      department: other.department || 'Attendee',
+      when: new Date(row.createdAt).toLocaleDateString(),
+    };
+  });
+}
+
+module.exports = { verifyCode, getHistory, getRecentForHandshakeList };
