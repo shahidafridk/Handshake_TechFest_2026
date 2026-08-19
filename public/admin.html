@@ -83,12 +83,6 @@
                 <span>Add User</span>
               </button>
             </li>
-            <li>
-              <button class="admin-nav-btn" data-tab="actions" role="tab" aria-selected="false">
-                <svg class="admin-icon" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/><path d="m9 12 2 2 4-4"/></svg>
-                <span>Account Actions</span>
-              </button>
-            </li>
           </ul>
         </div>
 
@@ -120,6 +114,10 @@
       </div>
 
       <div class="admin-sidebar-footer">
+        <div class="sidebar-user-badge">
+          <div class="admin-avatar">A</div>
+          <span id="sidebarUserHandle" class="admin-handle">@admin</span>
+        </div>
         <div class="admin-version-info">TechFest 2026 v1.0 · Secured</div>
       </div>
     </aside>
@@ -159,29 +157,6 @@
         </div>
 
         <div class="overview-widgets">
-          <div class="admin-card">
-            <div class="admin-card-header">
-              <h2 class="admin-card-title">
-                <svg class="admin-icon" viewBox="0 0 24 24"><rect width="16" height="20" x="4" y="2" rx="2" ry="2"/><path d="M9 22v-4h6v4"/><path d="M8 6h.01"/><path d="M16 6h.01"/><path d="M12 6h.01"/><path d="M12 10h.01"/><path d="M12 14h.01"/><path d="M16 10h.01"/><path d="M16 14h.01"/><path d="M8 10h.01"/><path d="M8 14h.01"/></svg>
-                <span>TOP PARTICIPATING INSTITUTIONS</span>
-              </h2>
-            </div>
-            <div class="table-container">
-              <table class="admin-table">
-                <thead>
-                  <tr>
-                    <th class="col-rank">RANK</th>
-                    <th>COLLEGE / INSTITUTION</th>
-                    <th class="col-num">PARTICIPANTS</th>
-                  </tr>
-                </thead>
-                <tbody id="topCollegesTableBody">
-                  <tr><td colspan="3" class="text-muted text-center">Loading institution stats…</td></tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
           <div class="admin-card">
             <div class="admin-card-header">
               <h2 class="admin-card-title">
@@ -343,68 +318,7 @@
         </div>
       </section>
 
-      <!-- 4. ACCOUNT ACTIONS TAB -->
-      <section id="sec-actions" class="admin-tab-content" role="tabpanel" hidden>
-        <div class="section-header">
-          <h1 class="section-title">Account Actions</h1>
-          <p class="section-subtitle">Lookup participant account status and reset credentials</p>
-        </div>
 
-        <div class="section-grid">
-          <div class="admin-card form-card-main">
-            <div class="admin-card-header">
-              <h2 class="admin-card-title">
-                <svg class="admin-icon" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                <span>Participant Account Lookup</span>
-              </h2>
-            </div>
-            <div class="admin-card-body">
-              <div id="quickActionAlert" class="admin-form-status" hidden></div>
-              
-              <div class="form-group">
-                <label for="targetUsernameInput" class="form-label">EXACT USERNAME <span class="req-star" aria-hidden="true" title="Required field">*</span></label>
-                <div class="input-with-button">
-                  <input type="text" id="targetUsernameInput" class="input-control" placeholder="Enter exact username (e.g. yadu24)">
-                  <button id="lookupUserBtn" class="btn btn-secondary" type="button">Lookup Account</button>
-                </div>
-              </div>
-
-              <div id="userInfoPanel" class="user-detail-panel" hidden>
-                <div class="credential-box">
-                  <div class="cred-item"><span class="cred-label">FULL NAME:</span><span id="detailFullName" class="font-mono">--</span></div>
-                  <div class="cred-item"><span class="cred-label">USERNAME:</span><span id="detailUsername" class="cred-val">--</span></div>
-                  <div class="cred-item"><span class="cred-label">PHONE:</span><span id="detailPhone" class="font-mono">--</span></div>
-                  <div class="cred-item"><span class="cred-label">COLLEGE:</span><span id="detailCollege" class="font-mono">--</span></div>
-                </div>
-
-                <div class="action-buttons-group">
-                  <button id="resetPwActionBtn" class="btn btn-secondary" type="button">RESET PASSWORD</button>
-                  <button id="deleteUserActionBtn" class="btn btn-danger" type="button">DELETE ACCOUNT</button>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="admin-card side-info-card">
-            <div class="admin-card-header">
-              <h2 class="admin-card-title">
-                <svg class="admin-icon text-orange" viewBox="0 0 24 24"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10"/></svg>
-                <span>Admin Controls</span>
-              </h2>
-            </div>
-            <div class="admin-card-body side-info-body">
-              <div class="info-item">
-                <h4 class="info-title">Reset Password</h4>
-                <p class="info-desc">Generates a new password for the selected account.</p>
-              </div>
-              <div class="info-item">
-                <h4 class="info-title">Delete Account</h4>
-                <p class="info-desc">Permanently removes participant and linked records.</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
 
       <!-- 5. CSV IMPORT TAB -->
       <section id="sec-import" class="admin-tab-content" role="tabpanel" hidden>
@@ -715,14 +629,6 @@
     <button class="mobile-nav-item" data-tab="participants" type="button">
       <svg class="mobile-nav-icon" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
       <span>Users</span>
-    </button>
-    <button class="mobile-nav-item" data-tab="add-user" type="button">
-      <svg class="mobile-nav-icon" viewBox="0 0 24 24"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="17" y1="11" x2="23" y2="11"/></svg>
-      <span>Add User</span>
-    </button>
-    <button class="mobile-nav-item" data-tab="audit" type="button">
-      <svg class="mobile-nav-icon" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-      <span>Logs</span>
     </button>
   </nav>
 

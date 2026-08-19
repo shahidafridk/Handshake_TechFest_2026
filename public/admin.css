@@ -419,6 +419,24 @@ body.admin-body {
 
 
 
+.sidebar-user-badge {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  padding: 8px 12px;
+  background: var(--admin-bg-surface);
+  border: 1px solid var(--admin-border-default);
+  border-radius: var(--admin-radius-md);
+}
+
+.sidebar-user-badge .admin-handle {
+  font-family: var(--admin-font-mono);
+  font-size: 12.5px;
+  font-weight: 700;
+  color: var(--admin-text-dark);
+}
+
 .admin-version-info {
   font-family: var(--admin-font-mono);
   font-size: 10.5px;

@@ -137,12 +137,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // ─── 1. OVERVIEW DATA ─────────────────────────────────────
   async function loadOverview() {
-    const topCollegesBody = $('topCollegesTableBody');
     const topParticipantsBody = $('topParticipantsTableBody');
 
-    if (topCollegesBody) {
-      topCollegesBody.innerHTML = '<tr><td colspan="3" class="text-muted text-center">Loading institution stats…</td></tr>';
-    }
     if (topParticipantsBody) {
       topParticipantsBody.innerHTML = '<tr><td colspan="4" class="text-muted text-center">Loading top networkers…</td></tr>';
     }
@@ -155,26 +151,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if ($('statActiveUsers')) $('statActiveUsers').textContent = data.active_users ?? 0;
     if ($('statTotalHandshakes')) $('statTotalHandshakes').textContent = data.verified_handshakes ?? 0;
     if ($('statTodaysHandshakes')) $('statTodaysHandshakes').textContent = data.todays_handshakes ?? 0;
-
-    // Top Colleges Table
-    if (topCollegesBody) {
-      const colleges = data.top_colleges || [];
-      if (colleges.length === 0) {
-        topCollegesBody.innerHTML = '<tr><td colspan="3" class="text-muted text-center">No college data available</td></tr>';
-      } else {
-        topCollegesBody.innerHTML = colleges
-          .map(
-            (c) => `
-          <tr>
-            <td class="col-rank"><strong>#${c.rank}</strong></td>
-            <td>${escapeHtml(c.college)}</td>
-            <td class="col-num"><span class="badge-count">${c.participant_count}</span></td>
-          </tr>
-        `
-          )
-          .join('');
-      }
-    }
 
     // Top Networkers Table
     if (topParticipantsBody) {
@@ -703,83 +679,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // ─── 4. ACCOUNT ACTIONS TAB ───────────────────────────────
-  let currentLookupUser = null;
 
-  $('lookupUserBtn')?.addEventListener('click', async () => {
-    const input = $('targetUsernameInput')?.value.trim();
-    const alertEl = $('quickActionAlert');
-    if (alertEl) alertEl.hidden = true;
-
-    if (!input) {
-      showFormStatus(alertEl, 'Please enter a username to lookup.', false);
-      return;
-    }
-
-    const res = await apiFetch(`/api/admin/participants?q=${encodeURIComponent(input)}`);
-    if (!res || !res.response.ok) {
-      showFormStatus(alertEl, 'Failed to perform participant lookup.', false);
-      return;
-    }
-
-    const list = res.data.data?.participants || [];
-    const found = list.find((u) => u.username.toLowerCase() === input.toLowerCase());
-
-    if (!found) {
-      showFormStatus(alertEl, `No participant found matching "@${input}".`, false);
-      if ($('userInfoPanel')) $('userInfoPanel').hidden = true;
-      return;
-    }
-
-    currentLookupUser = found;
-    if ($('detailFullName')) $('detailFullName').textContent = found.full_name;
-    if ($('detailUsername')) $('detailUsername').textContent = `@${found.username}`;
-    if ($('detailPhone')) $('detailPhone').textContent = found.phone || 'N/A';
-    if ($('detailCollege')) $('detailCollege').textContent = found.college || 'N/A';
-
-    if ($('userInfoPanel')) $('userInfoPanel').hidden = false;
-  });
-
-  $('resetPwActionBtn')?.addEventListener('click', () => {
-    if (!currentLookupUser) return;
-
-    showConfirmModal(
-      'Reset Password',
-      `Reset password for @${currentLookupUser.username}? A new random password will be generated.`,
-      async () => {
-        const alertEl = $('quickActionAlert');
-        const res = await apiFetch(`/api/admin/participants/${currentLookupUser.username}/reset-password`, { method: 'PUT' });
-        if (res && res.response.ok) {
-          const newPw = res.data.data?.new_password;
-          showCreatedModal(currentLookupUser.username, newPw, currentLookupUser.full_name, 'Password Reset Successful');
-          showToast(`Password reset for @${currentLookupUser.username}.`, true);
-        } else {
-          showFormStatus(alertEl, res?.data?.message || 'Reset failed.', false);
-        }
-      }
-    );
-  });
-
-  $('deleteUserActionBtn')?.addEventListener('click', () => {
-    if (!currentLookupUser) return;
-
-    showConfirmModal(
-      'Delete Participant Account',
-      `Are you sure you want to permanently DELETE participant @${currentLookupUser.username}? This action cannot be undone.`,
-      async () => {
-        const alertEl = $('quickActionAlert');
-        const res = await apiFetch(`/api/admin/participants/${currentLookupUser.username}`, { method: 'DELETE' });
-        if (res && res.response.ok) {
-          showToast(`Account @${currentLookupUser.username} deleted successfully.`, true);
-          if ($('userInfoPanel')) $('userInfoPanel').hidden = true;
-          if ($('targetUsernameInput')) $('targetUsernameInput').value = '';
-          currentLookupUser = null;
-        } else {
-          showFormStatus(alertEl, res?.data?.message || 'Delete failed.', false);
-        }
-      }
-    );
-  });
 
   // ─── 5. CSV IMPORT ─────────────────────────────────────────
   $('csvImportForm')?.addEventListener('submit', async (e) => {
