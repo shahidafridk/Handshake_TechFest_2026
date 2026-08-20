@@ -512,25 +512,35 @@ document.addEventListener('DOMContentLoaded', () => {
   closeResetModalBtn?.addEventListener('click', hideResetModal);
   cancelResetModalBtn?.addEventListener('click', hideResetModal);
 
-  function generate6CharPassword() {
-    const chars = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789abcdefghjkmnpqrstuvwxyz';
-    let pw = '';
-    if (window.crypto && window.crypto.getRandomValues) {
-      const array = new Uint32Array(6);
-      window.crypto.getRandomValues(array);
-      for (let i = 0; i < 6; i++) {
-        pw += chars[array[i] % chars.length];
+  function generateSmartPassword(fullName) {
+    const cleanStr = (fullName || '').trim();
+    const words = cleanStr.split(/\s+/).filter(Boolean);
+
+    let chosenWord = '';
+
+    if (words.length >= 2) {
+      const secondWordClean = words[1].replace(/[^a-zA-Z0-9]/g, '');
+      if (secondWordClean.length >= 3) {
+        chosenWord = secondWordClean;
+      } else {
+        chosenWord = words[0].replace(/[^a-zA-Z0-9]/g, '');
       }
-    } else {
-      for (let i = 0; i < 6; i++) {
-        pw += chars.charAt(Math.floor(Math.random() * chars.length));
-      }
+    } else if (words.length === 1) {
+      chosenWord = words[0].replace(/[^a-zA-Z0-9]/g, '');
     }
-    return pw;
+
+    if (!chosenWord || chosenWord.length === 0) {
+      chosenWord = 'User';
+    }
+
+    chosenWord = chosenWord.charAt(0).toUpperCase() + chosenWord.slice(1);
+    const random3Digit = Math.floor(100 + Math.random() * 900);
+    return `${chosenWord}@${random3Digit}`;
   }
 
   $('autoGenResetPassBtn')?.addEventListener('click', () => {
-    const generatedPw = generate6CharPassword();
+    const fullName = $('resetTargetFullName')?.value || '';
+    const generatedPw = generateSmartPassword(fullName);
     if ($('resetPasswordInput')) $('resetPasswordInput').value = generatedPw;
   });
 
@@ -586,7 +596,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // ─── 3. CREATE PARTICIPANT FORM ───────────────────────────
   const autoGenBtn = $('autoGenPassBtn');
   autoGenBtn?.addEventListener('click', () => {
-    const generatedPw = generate6CharPassword();
+    const fullName = $('consoleFullName')?.value || '';
+    const generatedPw = generateSmartPassword(fullName);
     if ($('consolePassword')) $('consolePassword').value = generatedPw;
   });
 

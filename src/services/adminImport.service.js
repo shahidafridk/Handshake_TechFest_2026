@@ -64,7 +64,7 @@ async function importParticipants(csvText, adminId) {
     }
 
     const username = await generateUniqueUsername(row.fullName, reservedUsernamesInBatch);
-    const plaintextPassword = generateSecurePassword();
+    const plaintextPassword = generateSecurePassword(row.fullName);
     const passwordHash = await bcrypt.hash(plaintextPassword, BCRYPT_ROUNDS);
 
     await prisma.user.create({

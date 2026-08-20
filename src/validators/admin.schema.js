@@ -46,7 +46,7 @@ const createParticipantSchema = z
       .min(1, 'Username is required')
       .max(50, 'Username too long')
       .regex(/^[a-zA-Z0-9_-]+$/, 'Username can only contain alphanumeric characters, underscores, and hyphens'),
-    password: z.string().min(6, 'Password must be at least 6 characters').max(200),
+    password: z.string().min(4, 'Password must be at least 4 characters').max(200),
     phone: z
       .string()
       .trim()
@@ -114,7 +114,7 @@ const updateParticipantSchema = z
       .transform((v) => (v ? v : undefined)),
     password: z
       .string()
-      .min(6, 'Password must be at least 6 characters')
+      .min(4, 'Password must be at least 4 characters')
       .max(200)
       .optional()
       .or(z.literal(''))
@@ -130,7 +130,7 @@ const resetPasswordSchema = z
   .object({
     password: z
       .string()
-      .min(6, 'Password must be at least 6 characters')
+      .min(4, 'Password must be at least 4 characters')
       .max(200)
       .optional()
       .or(z.literal(''))

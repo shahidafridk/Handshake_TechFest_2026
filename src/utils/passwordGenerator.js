@@ -1,24 +1,30 @@
-// Generates a random temporary password for a newly-imported participant.
-// crypto.randomInt, not Math.random() — same reasoning as codeGenerator.js:
-// this backs a real credential, however temporary, and must be
-// cryptographically secure.
-
 const crypto = require('crypto');
 
-// Mixed case + digits, no symbols — organizers may need to read these
-// aloud or relay them via SMS/email; ambiguous-to-type symbols aren't worth
-// the marginal entropy gain at this length. No character exclusions beyond
-// that (unlike handshake codes, these aren't read off a phone screen
-// mid-conversation, so 0/O and 1/I ambiguity matters less here).
-const PASSWORD_CHARSET = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789abcdefghjkmnpqrstuvwxyz';
-const PASSWORD_LENGTH = 6;
+function generateSecurePassword(fullName = '') {
+  const cleanStr = (fullName || '').trim();
+  const words = cleanStr.split(/\s+/).filter(Boolean);
 
-function generateSecurePassword(length = PASSWORD_LENGTH) {
-  let password = '';
-  for (let i = 0; i < length; i++) {
-    password += PASSWORD_CHARSET[crypto.randomInt(0, PASSWORD_CHARSET.length)];
+  let chosenWord = '';
+
+  if (words.length >= 2) {
+    const secondWordClean = words[1].replace(/[^a-zA-Z0-9]/g, '');
+    if (secondWordClean.length >= 3) {
+      chosenWord = secondWordClean;
+    } else {
+      chosenWord = words[0].replace(/[^a-zA-Z0-9]/g, '');
+    }
+  } else if (words.length === 1) {
+    chosenWord = words[0].replace(/[^a-zA-Z0-9]/g, '');
   }
-  return password;
+
+  if (!chosenWord || chosenWord.length === 0) {
+    chosenWord = 'User';
+  }
+
+  chosenWord = chosenWord.charAt(0).toUpperCase() + chosenWord.slice(1);
+  const random3Digit = crypto.randomInt(100, 1000);
+
+  return `${chosenWord}@${random3Digit}`;
 }
 
 module.exports = { generateSecurePassword };
