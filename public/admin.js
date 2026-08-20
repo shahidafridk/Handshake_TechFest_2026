@@ -593,6 +593,28 @@ document.addEventListener('DOMContentLoaded', () => {
     if ($('consolePassword')) $('consolePassword').value = generatedPw;
   });
 
+  // Strict Phone number restriction (digits only)
+  const consolePhoneInput = $('consolePhone');
+  consolePhoneInput?.addEventListener('input', (e) => {
+    e.target.value = e.target.value.replace(/\D/g, '');
+  });
+
+  // Real-time Email format validation feedback
+  const consoleEmailInput = $('consoleEmail');
+  const consoleEmailFeedback = $('consoleEmailFeedback');
+  consoleEmailInput?.addEventListener('input', () => {
+    const val = consoleEmailInput.value.trim();
+    if (!val) {
+      if (consoleEmailFeedback) consoleEmailFeedback.textContent = '';
+      return;
+    }
+    const isValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val);
+    if (consoleEmailFeedback) {
+      consoleEmailFeedback.className = isValid ? 'input-feedback valid' : 'input-feedback invalid';
+      consoleEmailFeedback.textContent = isValid ? '✓ Valid email format' : '⚠ Please enter a valid email (e.g. user@domain.com)';
+    }
+  });
+
   const createForm = $('consoleCreateParticipantForm');
   createForm?.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -603,11 +625,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const username = $('consoleUsername')?.value.trim();
     const password = $('consolePassword')?.value;
     const phone = $('consolePhone')?.value.trim() || undefined;
+    const email = $('consoleEmail')?.value.trim() || undefined;
     const college = $('consoleCollege')?.value.trim() || undefined;
     const department = $('consoleDept')?.value.trim() || undefined;
 
     if (!fullName || !username || !password) {
       showFormStatus(formAlert, 'Full Name, Username, and Password are required.', false);
+      return;
+    }
+
+    if (phone && !/^\d{7,15}$/.test(phone)) {
+      showFormStatus(formAlert, 'Phone number must contain between 7 and 15 digits only.', false);
+      return;
+    }
+
+    if (email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      showFormStatus(formAlert, 'Please enter a valid email address (e.g. user@domain.com).', false);
       return;
     }
 
@@ -620,6 +653,7 @@ document.addEventListener('DOMContentLoaded', () => {
     try {
       const payload = { fullName, username, password };
       if (phone) payload.phone = phone;
+      if (email) payload.email = email;
       if (college) payload.college = college;
       if (department) payload.department = department;
 
@@ -643,6 +677,10 @@ document.addEventListener('DOMContentLoaded', () => {
       if (consoleUsernameFeedback) {
         consoleUsernameFeedback.className = 'input-feedback';
         consoleUsernameFeedback.textContent = '';
+      }
+      if (consoleEmailFeedback) {
+        consoleEmailFeedback.className = 'input-feedback';
+        consoleEmailFeedback.textContent = '';
       }
     } catch {
       showFormStatus(formAlert, 'Network error while creating participant account.', false);

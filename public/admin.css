@@ -634,10 +634,7 @@ body.admin-body {
 
 /* ─── OVERVIEW WIDGET GRID ───────────────────────────────── */
 .overview-widgets {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  align-items: start;
-  gap: 24px;
+  display: block;
   width: 100%;
 }
 
@@ -974,6 +971,36 @@ body.admin-body {
   font-size: 12px;
   font-weight: 700;
   color: var(--admin-text-dark);
+}
+
+/* Expanded Overview Ranking Leaderboard Table */
+#sec-overview .admin-table th {
+  padding: 14px 20px;
+  font-size: 11.5px;
+}
+
+#sec-overview .admin-table td {
+  padding: 16px 20px;
+  font-size: 14px;
+  max-width: none;
+}
+
+#sec-overview .admin-table .col-rank {
+  width: 90px;
+  font-size: 15px;
+}
+
+#sec-overview .admin-table .col-num {
+  width: 160px;
+}
+
+#sec-overview .badge-count {
+  padding: 4px 14px;
+  font-size: 13.5px;
+  background: var(--admin-orange-subtle);
+  border-color: var(--admin-orange-border);
+  color: var(--admin-orange);
+  font-weight: 800;
 }
 
 /* Status Badges */

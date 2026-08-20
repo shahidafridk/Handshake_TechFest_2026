@@ -24,5 +24,5 @@ services:
         value: "12"
       - key: HANDSHAKE_CODE_LENGTH
         value: "6"
-      - key: HANDSHAKE_CODE_EXPIRY_MINUTES
-        value: "2"
+      - key: HANDSHAKE_CODE_EXPIRY_SECONDS
+        value: "45"

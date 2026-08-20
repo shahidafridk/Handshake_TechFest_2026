@@ -12,7 +12,7 @@ module.exports = {
   BCRYPT_ROUNDS: env.BCRYPT_ROUNDS,
 
   HANDSHAKE_CODE_LENGTH: env.HANDSHAKE_CODE_LENGTH,
-  HANDSHAKE_CODE_EXPIRY_SECONDS: env.HANDSHAKE_CODE_EXPIRY_MINUTES * 60,
+  HANDSHAKE_CODE_EXPIRY_SECONDS: env.HANDSHAKE_CODE_EXPIRY_SECONDS,
 
   // Excludes 0/O, 1/I/L — ambiguous on a phone screen outdoors. Locked in
   // the architecture doc; changing this invalidates the entropy assumptions

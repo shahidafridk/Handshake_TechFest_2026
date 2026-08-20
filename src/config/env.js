@@ -33,7 +33,7 @@ const envSchema = z.object({
   BCRYPT_ROUNDS: z.coerce.number().int().min(10).max(15).default(12),
 
   HANDSHAKE_CODE_LENGTH: z.coerce.number().int().min(6).max(8).default(6),
-  HANDSHAKE_CODE_EXPIRY_MINUTES: z.coerce.number().int().positive().default(2),
+  HANDSHAKE_CODE_EXPIRY_SECONDS: z.coerce.number().int().positive().default(45),
 });
 
 const parsed = envSchema.safeParse(process.env);
