@@ -1,4 +1,3 @@
-const { execSync } = require('child_process');
 const prisma = require('../db/client');
 const bcrypt = require('bcrypt');
 const { BCRYPT_ROUNDS } = require('../config/constants');
@@ -12,36 +11,31 @@ const DEFAULT_ADMINS = [
 
 async function bootstrapAdmins() {
   try {
-    logger.info('Ensuring PostgreSQL database tables exist...');
-    try {
-      execSync('npx prisma db push --skip-generate', { stdio: 'pipe' });
-    } catch (pushErr) {
-      logger.warn('Prisma db push warning during startup:', pushErr.message);
-    }
+    const existing = await prisma.user.findMany({
+      where: { username: { in: DEFAULT_ADMINS.map((a) => a.username) } },
+      select: { username: true },
+    });
 
-    logger.info('Ensuring 3 default admin accounts exist in database...');
+    const existingUsernames = new Set(existing.map((u) => u.username));
+
     for (const admin of DEFAULT_ADMINS) {
-      const passwordHash = await bcrypt.hash(admin.password, BCRYPT_ROUNDS);
-      await prisma.user.upsert({
-        where: { username: admin.username },
-        update: {
-          passwordHash,
-          isAdmin: true,
-          isActive: true,
-        },
-        create: {
-          username: admin.username,
-          fullName: admin.fullName,
-          college: 'St. Marys Organizing Committee',
-          passwordHash,
-          isAdmin: true,
-          isActive: true,
-        },
-      });
+      if (!existingUsernames.has(admin.username)) {
+        const passwordHash = await bcrypt.hash(admin.password, BCRYPT_ROUNDS);
+        await prisma.user.create({
+          data: {
+            username: admin.username,
+            fullName: admin.fullName,
+            college: 'St. Marys Organizing Committee',
+            passwordHash,
+            isAdmin: true,
+            isActive: true,
+          },
+        });
+      }
     }
-    logger.info('✅ 3 Admin accounts (admin1, admin2, admin3) are ready.');
+    logger.info('✅ Default admin accounts initialized.');
   } catch (err) {
-    logger.error({ err }, 'Failed to bootstrap admin accounts during startup');
+    logger.error({ err }, 'Admin bootstrap check completed.');
   }
 }
 

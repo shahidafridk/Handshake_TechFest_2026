@@ -3,9 +3,8 @@ services:
     name: handshake-backend
     runtime: node
     plan: starter
-    buildCommand: npm install && npm run prisma:generate
+    buildCommand: npm install && npm run prisma:generate && npx prisma db push --accept-data-loss
     startCommand: npm start
-    preDeployCommand: npx prisma migrate deploy
     healthCheckPath: /health
     envVars:
       - key: NODE_ENV
