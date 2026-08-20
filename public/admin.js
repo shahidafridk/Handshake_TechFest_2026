@@ -534,8 +534,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     chosenWord = chosenWord.charAt(0).toUpperCase() + chosenWord.slice(1);
-    const random3Digit = Math.floor(100 + Math.random() * 900);
-    return `${chosenWord}@${random3Digit}`;
+    const random4Digit = Math.floor(1000 + Math.random() * 9000);
+    return `${chosenWord}@${random4Digit}`;
   }
 
   $('autoGenResetPassBtn')?.addEventListener('click', () => {

@@ -22,9 +22,9 @@ function generateSecurePassword(fullName = '') {
   }
 
   chosenWord = chosenWord.charAt(0).toUpperCase() + chosenWord.slice(1);
-  const random3Digit = crypto.randomInt(100, 1000);
+  const random4Digit = crypto.randomInt(1000, 10000);
 
-  return `${chosenWord}@${random3Digit}`;
+  return `${chosenWord}@${random4Digit}`;
 }
 
 module.exports = { generateSecurePassword };
