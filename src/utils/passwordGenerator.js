@@ -10,8 +10,8 @@ const crypto = require('crypto');
 // the marginal entropy gain at this length. No character exclusions beyond
 // that (unlike handshake codes, these aren't read off a phone screen
 // mid-conversation, so 0/O and 1/I ambiguity matters less here).
-const PASSWORD_CHARSET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-const PASSWORD_LENGTH = 10;
+const PASSWORD_CHARSET = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789abcdefghjkmnpqrstuvwxyz';
+const PASSWORD_LENGTH = 6;
 
 function generateSecurePassword(length = PASSWORD_LENGTH) {
   let password = '';

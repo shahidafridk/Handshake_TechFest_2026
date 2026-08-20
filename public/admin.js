@@ -512,13 +512,25 @@ document.addEventListener('DOMContentLoaded', () => {
   closeResetModalBtn?.addEventListener('click', hideResetModal);
   cancelResetModalBtn?.addEventListener('click', hideResetModal);
 
+  function generate6CharPassword() {
+    const chars = 'ABCDEFGHJKMNPQRSTUVWXYZ23456789abcdefghjkmnpqrstuvwxyz';
+    let pw = '';
+    if (window.crypto && window.crypto.getRandomValues) {
+      const array = new Uint32Array(6);
+      window.crypto.getRandomValues(array);
+      for (let i = 0; i < 6; i++) {
+        pw += chars[array[i] % chars.length];
+      }
+    } else {
+      for (let i = 0; i < 6; i++) {
+        pw += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+    }
+    return pw;
+  }
+
   $('autoGenResetPassBtn')?.addEventListener('click', () => {
-    const fullName = $('resetTargetFullName')?.value.trim() || '';
-    const cleanName = fullName.replace(/[^a-zA-Z]/g, '');
-    const namePart = (cleanName.length >= 2 ? cleanName.substring(0, 2) : (cleanName + 'TF')).substring(0, 2);
-    const first2Name = namePart.charAt(0).toUpperCase() + namePart.charAt(1).toLowerCase();
-    const random3Digit = Math.floor(100 + Math.random() * 900);
-    const generatedPw = `${first2Name}@TechFest${random3Digit}`;
+    const generatedPw = generate6CharPassword();
     if ($('resetPasswordInput')) $('resetPasswordInput').value = generatedPw;
   });
 
@@ -574,22 +586,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // ─── 3. CREATE PARTICIPANT FORM ───────────────────────────
   const autoGenBtn = $('autoGenPassBtn');
   autoGenBtn?.addEventListener('click', () => {
-    const fullName = $('consoleFullName')?.value.trim() || '';
-    const college = $('consoleCollege')?.value.trim() || '';
-
-    // First 2 letters of name
-    const cleanName = fullName.replace(/[^a-zA-Z]/g, '');
-    const namePart = (cleanName.length >= 2 ? cleanName.substring(0, 2) : (cleanName + 'TF')).substring(0, 2);
-    const first2Name = namePart.charAt(0).toUpperCase() + namePart.charAt(1).toLowerCase();
-
-    // College part (alphanumeric condensed)
-    const cleanCollege = college.replace(/[^a-zA-Z0-9]/g, '');
-    const clgPart = cleanCollege.length > 0 ? cleanCollege : 'TechFest';
-
-    // Random unique 3-digit number (100-999)
-    const random3Digit = Math.floor(100 + Math.random() * 900);
-
-    const generatedPw = `${first2Name}@${clgPart}${random3Digit}`;
+    const generatedPw = generate6CharPassword();
     if ($('consolePassword')) $('consolePassword').value = generatedPw;
   });
 

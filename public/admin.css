@@ -179,16 +179,18 @@ body.admin-body {
 }
 
 .admin-brand-icon {
-  width: 34px;
-  height: 34px;
-  background: var(--admin-orange);
-  border-radius: var(--admin-radius-sm);
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--admin-text-white);
   flex-shrink: 0;
-  box-shadow: 0 2px 4px rgba(255, 85, 0, 0.25);
+}
+
+.brand-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 .admin-brand-text {
