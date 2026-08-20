@@ -25,10 +25,10 @@ const verifyCodeSchema = z.object({
     .min(1, 'Handshake code is required.')
     .max(16, 'Invalid handshake code format.')
     .transform(normalizeHandshakeCode),
-}).strict();
+});
 
 const historyQuerySchema = z.object({
   limit: z.coerce.number().int().min(1).max(100).default(20),
-}).strict();
+});
 
 module.exports = { verifyCodeSchema, historyQuerySchema };

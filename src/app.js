@@ -29,11 +29,17 @@ app.use(compression());
 // front of the app — not a wildcard trust of arbitrary forwarded headers.
 app.set('trust proxy', 1);
 
+app.disable('x-powered-by');
+
+app.use((req, res, next) => {
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  res.setHeader('X-XSS-Protection', '1; mode=block');
+  next();
+});
+
 app.use(helmet({
   // Content Security Policy — restrict resource loading to same-origin and
-  // specific trusted CDNs. `'unsafe-inline'` for styles is required by the
-  // existing inline style="" attributes in dashboard.js; avoiding it would
-  // require a refactor of the frontend JS that's out of scope here.
+  // specific trusted CDNs.
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
@@ -48,24 +54,14 @@ app.use(helmet({
       formAction: ["'self'"],
     },
   },
-  // Strict-Transport-Security: enforce HTTPS in production. Browsers will
-  // refuse to load the site over plain HTTP for 1 year after seeing this.
   hsts: {
     maxAge: 31536000,
     includeSubDomains: true,
     preload: true,
   },
-  // X-Content-Type-Options: nosniff — already the Helmet default, made
-  // explicit for auditability.
   noSniff: true,
-  // X-Frame-Options: DENY — redundant with frameAncestors above, but a
-  // defense-in-depth measure for older browsers that don't support CSP.
   frameguard: { action: 'deny' },
-  // Referrer-Policy: no-referrer — never leak full URLs (which may contain
-  // tokens in query params) to external origins in the Referer header.
-  referrerPolicy: { policy: 'no-referrer' },
-  // X-Permitted-Cross-Domain-Policies: none — prevents Adobe Flash/PDF
-  // from making cross-domain requests using this domain's resources.
+  referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
   permittedCrossDomainPolicies: { permittedPolicies: 'none' },
 }));
 

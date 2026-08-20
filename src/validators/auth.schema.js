@@ -10,6 +10,6 @@ const loginSchema = z.object({
     .string()
     .min(1, 'Password is required')
     .max(200, 'Password is too long'),
-}).strict();
+}).passthrough();
 
 module.exports = { loginSchema };

@@ -47,12 +47,18 @@ const createParticipantSchema = z
       .max(50, 'Username too long')
       .regex(/^[a-zA-Z0-9_-]+$/, 'Username can only contain alphanumeric characters, underscores, and hyphens'),
     password: z.string().min(6, 'Password must be at least 6 characters').max(200),
-  phone: z
-    .string()
-    .trim()
-    .optional()
-    .or(z.literal(''))
-    .transform((v) => (v ? v : undefined)),
+    phone: z
+      .string()
+      .trim()
+      .optional()
+      .or(z.literal(''))
+      .transform((v) => (v ? v : undefined)),
+    email: z
+      .string()
+      .trim()
+      .optional()
+      .or(z.literal(''))
+      .transform((v) => (v ? v : undefined)),
     college: z
       .string()
       .trim()
@@ -68,8 +74,7 @@ const createParticipantSchema = z
       .or(z.literal(''))
       .transform((v) => (v ? v : undefined)),
     year: z.coerce.number().int().positive().optional().catch(undefined),
-  })
-  .strict();
+  });
 
 const updateParticipantSchema = z
   .object({
@@ -82,6 +87,12 @@ const updateParticipantSchema = z
       .regex(/^[a-zA-Z0-9_-]+$/, 'Username can only contain alphanumeric characters, underscores, and hyphens')
       .optional(),
     phone: z
+      .string()
+      .trim()
+      .optional()
+      .or(z.literal(''))
+      .transform((v) => (v ? v : undefined)),
+    email: z
       .string()
       .trim()
       .optional()
@@ -108,8 +119,7 @@ const updateParticipantSchema = z
       .optional()
       .or(z.literal(''))
       .transform((v) => (v ? v : undefined)),
-  })
-  .strict();
+  });
 
 const checkUsernameQuerySchema = z.object({
   username: z.string().trim().min(1).max(50),
@@ -125,8 +135,7 @@ const resetPasswordSchema = z
       .optional()
       .or(z.literal(''))
       .transform((v) => (v ? v : undefined)),
-  })
-  .strict();
+  });
 
 module.exports = {
   csvRowSchema,
